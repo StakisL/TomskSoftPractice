@@ -17,7 +17,6 @@ set(PROJECT_SOURCE
     widget.h
     about.cpp
     about.h
-    tomsksoft_practice_global.h
     )
 
 add_executable(${PROJECT_NAME} WIN32 ${PROJECT_SOURCE})	
