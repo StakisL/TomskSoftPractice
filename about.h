@@ -11,7 +11,7 @@ class About : public QDialog
 	Q_OBJECT
 
 public:
-	About();
+	About(QDialog *parent = 0);
 	~About();
 
 private:

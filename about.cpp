@@ -2,7 +2,7 @@
 #include <QLayout>
 #include <QtWidgets>
 
-About::About()
+About::About(QDialog *parent) : QDialog(parent)
 {
 	textAbout = new QLabel;
 	textAbout->setText(tr("Summer practice programm. "

@@ -15,7 +15,7 @@ class Widget : public QWidget
 	Q_OBJECT
 
 public:
-	Widget();
+	Widget(QWidget *parent = 0);
 	~Widget();
 
 private slots:
@@ -34,8 +34,8 @@ private:
 	QGroupBox *gridGroupBox;
 	QGroupBox *formGroupBox;
 
-	QLabel *firstCollums[NumGridRows];
-	QLabel *secondCollums[NumGridRows];
+	QLabel *currencyCollums[NumGridRows];
+	QLabel *valueCollums[NumGridRows];
 	QLabel *valueLabel;
 	QLabel *currencyLabel;
 

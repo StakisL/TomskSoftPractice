@@ -1,9 +1,10 @@
 #include <QLayout>
 #include <QtWidgets>
+#include <QDate>
 #include "widget.h"
 #include "about.h"
 
-Widget::Widget()
+Widget::Widget(QWidget *parent) : QWidget(parent)
 {
 	createFormGroupBox();
 	createGridGroupBox();
@@ -22,14 +23,14 @@ void Widget::createGridGroupBox()
 	
 	for (int i = 0; i < NumGridRows; ++i)
 	{
-		firstCollums[i] = new QLabel(tr("Currency %1:").arg(i + 1));
-		layout->addWidget(firstCollums[i], i + 1, 1);
+		currencyCollums[i] = new QLabel(tr("Currency %1:").arg(i + 1));
+		layout->addWidget(currencyCollums[i], i + 1, 1);
 	}
 
 	for (int i = 0; i < NumGridRows; ++i) 
 	{
-		secondCollums[i] = new QLabel(tr("Value :").arg(i + 1));
-		layout->addWidget(secondCollums[i], i + 1, 2);
+		valueCollums[i] = new QLabel(tr("Value :").arg(i + 1));
+		layout->addWidget(valueCollums[i], i + 1, 2);
 	}
 
 	layout->setHorizontalSpacing(50);
@@ -40,7 +41,8 @@ void Widget::createGridGroupBox()
 
 void Widget::createFormGroupBox()
 {
-	formGroupBox = new QGroupBox(tr("Date"));
+	QDate dateToDay = QDate::currentDate();
+	formGroupBox = new QGroupBox(dateToDay.toString("dd.MM.yy"));
 	formGroupBox->setFixedHeight(100);
 	QFormLayout *layout = new QFormLayout;
 
@@ -53,6 +55,13 @@ void Widget::createFormGroupBox()
 
 	valueEdit = new QLineEdit();
 	currencyBox = new QComboBox();
+
+	currencyBox->addItem("RUB");
+	currencyBox->addItem("USD");
+	currencyBox->addItem("EUR");
+	currencyBox->addItem("AUD");
+	currencyBox->addItem("JPY");
+
 
 	layout->addRow(valueLabel, valueEdit);
 	layout->addRow(currencyLabel, currencyBox);
