@@ -16,6 +16,10 @@ Widget::Widget(QWidget *parent) : QWidget(parent)
 }
 
 
+/*
+    Функция создает GridLayout на которой отображаются
+	Валюты, их курс и переведенная сумма.
+*/
 void Widget::createGridGroupBox()
 {
 	gridGroupBox = new QGroupBox(tr("Result convert"));
@@ -39,6 +43,11 @@ void Widget::createGridGroupBox()
 	gridGroupBox->setLayout(layout);
 }
 
+
+/*
+    Создает FormLayout который служит для ввода базовой валюты и суммы
+	для перевода, так же содержит текущую дату.
+*/
 void Widget::createFormGroupBox()
 {
 	QDate dateToDay = QDate::currentDate();
@@ -73,11 +82,13 @@ void Widget::createFormGroupBox()
 	
 }
 
+
 void Widget::createWindow()
 {
 	About about;
 	about.exec();
 }
+
 
 Widget::~Widget()
 {

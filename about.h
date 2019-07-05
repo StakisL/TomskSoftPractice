@@ -6,6 +6,9 @@
 class QLabel;
 class QPushButton;
 
+/*
+    Класс описывает форму About
+*/
 class About : public QDialog
 {
 	Q_OBJECT

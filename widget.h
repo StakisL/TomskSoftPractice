@@ -10,6 +10,10 @@ class QPushButton;
 class QTextEdit;
 class QComboBox;
 
+/*
+    Класс описывает основную форму и ее компоненты.
+*/
+
 class Widget : public QWidget
 {
 	Q_OBJECT
