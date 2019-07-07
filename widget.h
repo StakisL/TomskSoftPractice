@@ -2,6 +2,8 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include <QVector>
+#include "currency.h"
 
 class QGroupBox;
 class QLabel;
@@ -22,9 +24,9 @@ public:
 	Widget(QWidget *parent = 0);
 	~Widget();
 
-private slots:
+public slots:
 	void createWindow();
-	//void sendData();
+	void doConvert();
 
 private:
 	void createGridGroupBox();
@@ -46,6 +48,7 @@ private:
 	QLineEdit *valueEdit;
 	QComboBox *currencyBox;
 
+	QVector<Currency*> currencyWired;
 
 };
 

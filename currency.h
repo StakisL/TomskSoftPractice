@@ -13,12 +13,12 @@ class Currency
 {
 public:
 	Currency(QString _typeCurrency);
-	double getRatioCurrency();
-	double setRatioCurrency(double _ratioCurrency);
-	QString getTypeCurrency();
-	QString setTypeCurrency(QString _typeCurrency);
-	bool getBase();
-	bool setBase(bool _isBase);
+	double getRatioCurrency() const;
+	QString getTypeCurrency() const;
+	bool getBase() const;
+	void setRatioCurrency(double _ratioCurrency);
+	void setTypeCurrency(QString _typeCurrency);
+	void setBase(bool _isBase);
 	~Currency();
 
 private:

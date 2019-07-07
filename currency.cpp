@@ -7,32 +7,32 @@ Currency::Currency(QString _typeCurrency)
 	typeCurrency = _typeCurrency;
 }
 
-double Currency::getRatioCurrency()
+double Currency::getRatioCurrency() const
 {
 	return ratioCurrency;
 }
 
-double Currency::setRatioCurrency(double _ratioCurrency)
+void Currency::setRatioCurrency(double _ratioCurrency)
 {
 	ratioCurrency = _ratioCurrency;
 }
 
-QString Currency::getTypeCurrency()
+QString Currency::getTypeCurrency() const
 {
 	return typeCurrency;
 }
 
-QString Currency::setTypeCurrency(QString _typeCurrency)
+void Currency::setTypeCurrency(QString _typeCurrency)
 {
 	typeCurrency = _typeCurrency;
 }
 
-bool Currency::getBase()
+bool Currency::getBase() const
 {
 	return isBase;
 }
 
-bool Currency::setBase(bool _isBase)
+void Currency::setBase(bool _isBase)
 {
 	isBase = _isBase;
 }

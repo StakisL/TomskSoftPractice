@@ -6,6 +6,17 @@
 
 Widget::Widget(QWidget *parent) : QWidget(parent)
 {
+	/*
+	Инициализирую вшитые в приложение валюты.
+	*/
+	currencyWired.push_back(new Currency("RUB"));
+	currencyWired.push_back(new Currency("USD"));
+	currencyWired.push_back(new Currency("EUR"));
+	currencyWired.push_back(new Currency("AUD"));
+	currencyWired.push_back(new Currency("JPY"));
+	currencyWired.push_back(new Currency("CAD"));
+
+
 	createFormGroupBox();
 	createGridGroupBox();
 
@@ -58,19 +69,20 @@ void Widget::createFormGroupBox()
 
 	aboutButton = new QPushButton("About");
 	submitButton = new QPushButton("Submit");
-	
+
+	//aboutButton->setDefault(true);
+	//submitButton->setDefault(true);
+
 	valueLabel = new QLabel(tr("Value:"));
 	currencyLabel = new QLabel(tr("Currency:"));
 
 	valueEdit = new QLineEdit();
 	currencyBox = new QComboBox();
-
-	currencyBox->addItem("RUB");
-	currencyBox->addItem("USD");
-	currencyBox->addItem("EUR");
-	currencyBox->addItem("AUD");
-	currencyBox->addItem("JPY");
-
+	
+	for (int i = 0; i < currencyWired.size(); i++)
+	{
+		currencyBox->addItem(currencyWired[i]->getTypeCurrency());
+	}
 
 	layout->addRow(valueLabel, valueEdit);
 	layout->addRow(currencyLabel, currencyBox);
@@ -78,8 +90,26 @@ void Widget::createFormGroupBox()
 	formGroupBox->setLayout(layout);
 
 	connect(aboutButton, SIGNAL(clicked()), this, SLOT(createWindow()));
-	//connect(submitButton, SIGNAL(clicked()), this, SLOT(sendData()));
+	connect(submitButton, SIGNAL(clicked()), this, SLOT(doConvert()));
 	
+}
+
+void Widget::doConvert()
+{
+	QString str = currencyBox->currentText();
+	int j = 0;
+	for (int i = 0; i < currencyWired.size(); i++)
+	{
+		if (str == currencyWired[i]->getTypeCurrency())
+		{
+			currencyWired[i]->setBase(true);
+		}
+		else
+		{
+			currencyCollums[j]->setText(currencyWired[i]->getTypeCurrency() + ":");
+			j++;
+		}
+	}
 }
 
 
