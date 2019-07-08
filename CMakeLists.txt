@@ -19,6 +19,8 @@ set(PROJECT_SOURCE
     about.h
     currency.cpp
     currency.h
+    parse.cpp
+    parse.h
     )
 
 add_executable(${PROJECT_NAME} WIN32 ${PROJECT_SOURCE})	

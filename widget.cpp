@@ -3,6 +3,7 @@
 #include <QDate>
 #include "widget.h"
 #include "about.h"
+#include "parse.h"
 
 Widget::Widget(QWidget *parent) : QWidget(parent)
 {
@@ -96,19 +97,28 @@ void Widget::createFormGroupBox()
 
 void Widget::doConvert()
 {
-	QString str = currencyBox->currentText();
+	QString takeBaseCurrency = currencyBox->currentText();
 	int j = 0;
 	for (int i = 0; i < currencyWired.size(); i++)
 	{
-		if (str == currencyWired[i]->getTypeCurrency())
+		if (takeBaseCurrency == currencyWired[i]->getTypeCurrency())
 		{
 			currencyWired[i]->setBase(true);
+			currencyWired[i]->setRatioCurrency(1.0);
 		}
 		else
 		{
 			currencyCollums[j]->setText(currencyWired[i]->getTypeCurrency() + ":");
 			j++;
 		}
+	}
+
+	Parse parser(currencyWired);
+	currencyWired = parser.getResultParse();
+	for (int i = 0; i < currencyWired.size(); i++)
+	{
+		currencyCollums[i]->setText(currencyWired[i]->getTypeCurrency() 
+			+ ':' + currencyWired[i]->getRatioCurrency());
 	}
 }
 

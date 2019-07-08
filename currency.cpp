@@ -5,6 +5,7 @@
 Currency::Currency(QString _typeCurrency)
 {
 	typeCurrency = _typeCurrency;
+	isBase = false;
 }
 
 double Currency::getRatioCurrency() const

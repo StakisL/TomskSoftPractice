@@ -1,4 +1,6 @@
 #include <QApplication>
+#include <QSplashScreen>
+#include <QTimer>
 #include <widget.h>
 
 int main(int argc, char *argv[])
