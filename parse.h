@@ -8,19 +8,19 @@
 #include <QString>
 #include "Currency.h"
 
-class Parse : public QNetworkAccessManager
+class RequestAPI : public QNetworkAccessManager
 {
 	Q_OBJECT
 public:
-	Parse(QVector<Currency*> currency, QNetworkAccessManager *parent = 0);
+	RequestAPI(QVector<Currency*> currency, QNetworkAccessManager *parent = 0);
 	QVector<Currency*> getResultParse() const;
-	~Parse();
+	void getRequest();
+	~RequestAPI();
 private:
 	QVector<Currency*> currencyWired;
 	QNetworkAccessManager *manager;
-	QNetworkRequest *request;
 	QNetworkReply *reply;
-
+	QUrl url;
 private slots:
 	void replyFinished();
 

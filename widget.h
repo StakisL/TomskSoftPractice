@@ -1,8 +1,9 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
-#include <QWidget>
+#include <QtWidgets>
 #include <QVector>
+#include <QLayout>
 #include "currency.h"
 
 class QGroupBox;
@@ -39,6 +40,10 @@ private:
 
 	QGroupBox *gridGroupBox;
 	QGroupBox *formGroupBox;
+
+	QVBoxLayout *mainLayout;
+	QFormLayout *formLayout;
+	QGridLayout *gridLayout;
 
 	QLabel *currencyCollums[NumGridRows];
 	QLabel *valueCollums[NumGridRows];

@@ -1,5 +1,4 @@
-#include <QLayout>
-#include <QtWidgets>
+
 #include <QDate>
 #include "widget.h"
 #include "about.h"
@@ -21,7 +20,7 @@ Widget::Widget(QWidget *parent) : QWidget(parent)
 	createFormGroupBox();
 	createGridGroupBox();
 
-	QVBoxLayout *mainLayout = new QVBoxLayout;
+	mainLayout = new QVBoxLayout;
 	mainLayout->addWidget(formGroupBox);
 	mainLayout->addWidget(gridGroupBox);
 	setLayout(mainLayout);
@@ -35,24 +34,24 @@ Widget::Widget(QWidget *parent) : QWidget(parent)
 void Widget::createGridGroupBox()
 {
 	gridGroupBox = new QGroupBox(tr("Result convert"));
-	QGridLayout *layout = new QGridLayout;
+	gridLayout = new QGridLayout;
 	
 	for (int i = 0; i < NumGridRows; ++i)
 	{
 		currencyCollums[i] = new QLabel(tr("Currency %1:").arg(i + 1));
-		layout->addWidget(currencyCollums[i], i + 1, 1);
+		gridLayout->addWidget(currencyCollums[i], i + 1, 1);
 	}
 
 	for (int i = 0; i < NumGridRows; ++i) 
 	{
 		valueCollums[i] = new QLabel(tr("Value :").arg(i + 1));
-		layout->addWidget(valueCollums[i], i + 1, 2);
+		gridLayout->addWidget(valueCollums[i], i + 1, 2);
 	}
 
-	layout->setHorizontalSpacing(50);
-	layout->setColumnStretch(1, 10);
-	layout->setColumnStretch(2, 20);
-	gridGroupBox->setLayout(layout);
+	gridLayout->setHorizontalSpacing(50);
+	gridLayout->setColumnStretch(1, 10);
+	gridLayout->setColumnStretch(2, 20);
+	gridGroupBox->setLayout(gridLayout);
 }
 
 
@@ -65,7 +64,7 @@ void Widget::createFormGroupBox()
 	QDate dateToDay = QDate::currentDate();
 	formGroupBox = new QGroupBox(dateToDay.toString("dd.MM.yy"));
 	formGroupBox->setFixedHeight(100);
-	QFormLayout *layout = new QFormLayout;
+	formLayout = new QFormLayout;
 
 
 	aboutButton = new QPushButton("About");
@@ -85,15 +84,16 @@ void Widget::createFormGroupBox()
 		currencyBox->addItem(currencyWired[i]->getTypeCurrency());
 	}
 
-	layout->addRow(valueLabel, valueEdit);
-	layout->addRow(currencyLabel, currencyBox);
-	layout->addRow(aboutButton,submitButton);
-	formGroupBox->setLayout(layout);
+	formLayout->addRow(valueLabel, valueEdit);
+	formLayout->addRow(currencyLabel, currencyBox);
+	formLayout->addRow(aboutButton,submitButton);
+	formGroupBox->setLayout(formLayout);
 
 	connect(aboutButton, SIGNAL(clicked()), this, SLOT(createWindow()));
 	connect(submitButton, SIGNAL(clicked()), this, SLOT(doConvert()));
 	
 }
+
 
 void Widget::doConvert()
 {
@@ -113,13 +113,17 @@ void Widget::doConvert()
 		}
 	}
 
-	Parse parser(currencyWired);
-	currencyWired = parser.getResultParse();
-	for (int i = 0; i < currencyWired.size(); i++)
+	RequestAPI *parserRequest = new RequestAPI(currencyWired);
+	parserRequest->getRequest();
+	currencyWired = parserRequest->getResultParse();
+
+
+	/*for (int i = 0; i < NumGridRows; ++i)
 	{
-		currencyCollums[i]->setText(currencyWired[i]->getTypeCurrency() 
-			+ ':' + currencyWired[i]->getRatioCurrency());
+		
+		valueCollums[i]->setText(QString::number(currencyWired[i]->getRatioCurrency()));
 	}
+*/
 }
 
 

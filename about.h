@@ -2,6 +2,8 @@
 #define ABOUT_H
 
 #include <QDialog>
+#include <QLayout>
+#include <QtWidgets>
 
 class QLabel;
 class QPushButton;
@@ -20,6 +22,7 @@ public:
 private:
 	QPushButton *button;
 	QLabel *textAbout;
+	QVBoxLayout *mainLayout;
 };
 
 #endif

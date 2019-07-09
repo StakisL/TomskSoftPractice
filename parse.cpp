@@ -1,27 +1,27 @@
 #include "parse.h"
-#include <iostream>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QJsonObject>
-#include <QEventLoop>
 
-Parse::Parse(QVector<Currency*> currency, QNetworkAccessManager *parent) 
+RequestAPI::RequestAPI(QVector<Currency*> currency, QNetworkAccessManager *parent) 
 	: QNetworkAccessManager(parent)
 {
 	currencyWired = currency;
 	manager = new QNetworkAccessManager();
-	QUrl url("http://openexchangerates.org/api/latest.json?app_id=14b15df28cc54c29bc2669d50043b83b");
-	QNetworkRequest request(url);
-	QNetworkReply* reply = manager->get(request);
-	QEventLoop loop;
-	connect(reply, SIGNAL(finished()),this, SLOT(replyFinished()));
-	loop.exec();
+	url.setUrl("http://openexchangerates.org/api/latest.json?app_id=14b15df28cc54c29bc2669d50043b83b");
 }
 
-void Parse::replyFinished()
+void RequestAPI::getRequest()
 {
-	QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
+	QNetworkRequest request(url);
+	reply = manager->get(request);
+	connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
+}
+
+void RequestAPI::replyFinished()
+{
+	reply = qobject_cast<QNetworkReply *>(sender());
 
 	if (reply->error() == QNetworkReply::NoError)
 	{
@@ -46,12 +46,12 @@ void Parse::replyFinished()
 	reply->deleteLater();
 }
 
-QVector<Currency*> Parse::getResultParse() const
+QVector<Currency*> RequestAPI::getResultParse() const
 {
 	return currencyWired;
 }
 
-Parse::~Parse()
+RequestAPI::~RequestAPI()
 {
 
 }
