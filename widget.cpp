@@ -2,9 +2,9 @@
 #include <QDate>
 #include "widget.h"
 #include "about.h"
-#include "parse.h"
 
-Widget::Widget(QWidget *parent) : QWidget(parent)
+
+mainWindow::mainWindow(QWidget *parent) : QWidget(parent)
 {
 	/*
 	Инициализирую вшитые в приложение валюты.
@@ -31,7 +31,7 @@ Widget::Widget(QWidget *parent) : QWidget(parent)
     Функция создает GridLayout на которой отображаются
 	Валюты, их курс и переведенная сумма.
 */
-void Widget::createGridGroupBox()
+void mainWindow::createGridGroupBox()
 {
 	gridGroupBox = new QGroupBox(tr("Result convert"));
 	gridLayout = new QGridLayout;
@@ -59,7 +59,7 @@ void Widget::createGridGroupBox()
     Создает FormLayout который служит для ввода базовой валюты и суммы
 	для перевода, так же содержит текущую дату.
 */
-void Widget::createFormGroupBox()
+void mainWindow::createFormGroupBox()
 {
 	QDate dateToDay = QDate::currentDate();
 	formGroupBox = new QGroupBox(dateToDay.toString("dd.MM.yy"));
@@ -94,46 +94,96 @@ void Widget::createFormGroupBox()
 	
 }
 
+/*
+    Слот отправляет гет-запрос на внешную API
+*/
+void mainWindow::doConvert()
+{
+	parserRequest = new RequestAPI(currencyWired);
+	connect(parserRequest, SIGNAL(replyAccepted()), this, SLOT(onReplyAccept()));
+	parserRequest->getRequest();
+	submitButton->setEnabled(false);
+}
 
-void Widget::doConvert()
+/*
+    Слот обрабатывает данные полученные в результате гет-запроса
+*/
+void mainWindow::onReplyAccept()
 {
 	QString takeBaseCurrency = currencyBox->currentText();
-	int j = 0;
+	currencyWired = parserRequest->getResultParse();
+	int counterCollums = 0, temp = 0, baseCurrency = 0;
+	
 	for (int i = 0; i < currencyWired.size(); i++)
 	{
+		//Условие убирает предыдущее базовое значение.
+		if (takeBaseCurrency != currencyWired[i]->getTypeCurrency() && currencyWired[i]->getBase())
+		{
+			currencyWired[i]->setBase(false);
+		}
+
+		/*
+		Так как гет-запрос возвращает курс валют относительно базовой,
+		а ей является всегда USD,для того чтобы верно устнановить значения коэффициентов
+		нам нужен индекс объекта в котором находится валюта USD
+		*/
+		if (currencyWired[i]->getTypeCurrency() == "USD")
+		{
+			temp = i;
+		}
+
 		if (takeBaseCurrency == currencyWired[i]->getTypeCurrency())
 		{
-			currencyWired[i]->setBase(true);
-			currencyWired[i]->setRatioCurrency(1.0);
-		}
-		else
-		{
-			currencyCollums[j]->setText(currencyWired[i]->getTypeCurrency() + ":");
-			j++;
+			baseCurrency = i;
 		}
 	}
 
-	RequestAPI *parserRequest = new RequestAPI(currencyWired);
-	parserRequest->getRequest();
-	currencyWired = parserRequest->getResultParse();
+	//Устанавливаем значения базовой валюты
+	currencyWired[baseCurrency]->setBase(true);
+	currencyWired[temp]->setRatioCurrency(double(1 / currencyWired[baseCurrency]->getRatioCurrency()));
+	currencyWired[baseCurrency]->setRatioCurrency(1.0);
 
-
-	/*for (int i = 0; i < NumGridRows; ++i)
+	
+    //Перерасчитываем коэффициенты для валют относительно базовой.
+	for (int i = 0; i < currencyWired.size(); i++)
 	{
-		
-		valueCollums[i]->setText(QString::number(currencyWired[i]->getRatioCurrency()));
+		if (i != baseCurrency && i != temp)
+		{
+			currencyWired[i]->setRatioCurrency(double(currencyWired[temp]->getRatioCurrency()
+				*currencyWired[i]->getRatioCurrency()));
+		}
 	}
-*/
+
+	//Отображаем результаты в основном окне.
+	for (int i = 0; i < currencyWired.size(); ++i)
+	{
+		if (!currencyWired[i]->getBase())
+		{
+			currencyCollums[counterCollums]->setText(currencyWired[i]->getTypeCurrency() + ": "
+				+ QString::number(currencyWired[i]->getRatioCurrency()));
+
+			valueCollums[counterCollums]->setText(currencyWired[i]->getTypeCurrency() + ": "
+				+ QString::number(currencyWired[i]->getValue((valueEdit->text().toInt()))));
+			counterCollums++;
+		}
+
+	}
+	submitButton->setEnabled(true);
 }
 
 
-void Widget::createWindow()
+
+void mainWindow::createWindow()
 {
 	About about;
 	about.exec();
 }
 
 
-Widget::~Widget()
+mainWindow::~mainWindow()
 {
+	if (parserRequest != nullptr)
+	{
+		delete parserRequest;
+	}
 }

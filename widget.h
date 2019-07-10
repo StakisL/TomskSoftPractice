@@ -5,6 +5,7 @@
 #include <QVector>
 #include <QLayout>
 #include "currency.h"
+#include "parse.h"
 
 class QGroupBox;
 class QLabel;
@@ -17,17 +18,19 @@ class QComboBox;
     Класс описывает основную форму и ее компоненты.
 */
 
-class Widget : public QWidget
+class mainWindow : public QWidget
 {
 	Q_OBJECT
 
 public:
-	explicit Widget(QWidget *parent = 0);
-	~Widget();
+	explicit mainWindow(QWidget *parent = 0);
+	~mainWindow();
 
 public slots:
 	void createWindow();
 	void doConvert();
+	void onReplyAccept();
+
 
 private:
 	void createGridGroupBox();
@@ -54,7 +57,7 @@ private:
 	QComboBox *currencyBox;
 
 	QVector<Currency*> currencyWired;
-
+	RequestAPI *parserRequest;
 };
 
 #endif

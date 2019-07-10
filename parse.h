@@ -23,6 +23,8 @@ private:
 	QUrl url;
 private slots:
 	void replyFinished();
+signals:
+	void replyAccepted();
 
 };
 #endif

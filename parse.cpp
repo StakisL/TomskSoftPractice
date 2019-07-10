@@ -3,6 +3,7 @@
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QJsonObject>
+#include <QEventLoop>
 
 RequestAPI::RequestAPI(QVector<Currency*> currency, QNetworkAccessManager *parent) 
 	: QNetworkAccessManager(parent)
@@ -17,6 +18,8 @@ void RequestAPI::getRequest()
 	QNetworkRequest request(url);
 	reply = manager->get(request);
 	connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
+	
+	
 }
 
 void RequestAPI::replyFinished()
@@ -44,6 +47,7 @@ void RequestAPI::replyFinished()
 		}
 	}
 	reply->deleteLater();
+	emit replyAccepted();
 }
 
 QVector<Currency*> RequestAPI::getResultParse() const

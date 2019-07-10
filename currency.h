@@ -19,6 +19,7 @@ public:
 	void setRatioCurrency(double _ratioCurrency);
 	void setTypeCurrency(QString _typeCurrency);
 	void setBase(bool _isBase);
+	double getValue(int value);
 	~Currency();
 
 private:

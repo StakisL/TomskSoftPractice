@@ -22,8 +22,4 @@ About::About(QDialog *parent) : QDialog(parent)
 
 About::~About()
 {
-	if (button != nullptr)
-		delete button;
-	if (textAbout != nullptr)
-		delete textAbout;
 }
