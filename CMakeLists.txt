@@ -9,6 +9,7 @@ find_package(Qt5 REQUIRED COMPONENTS
     Widgets
     Core
     Gui
+    Network
 )
 
 set(PROJECT_SOURCE
@@ -19,6 +20,8 @@ set(PROJECT_SOURCE
     about.h
     currency.cpp
     currency.h
+    parse.cpp
+    parse.h
     )
 
 add_executable(${PROJECT_NAME} WIN32 ${PROJECT_SOURCE})	
@@ -26,4 +29,5 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
+    Qt5::Network
   )

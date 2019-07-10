@@ -1,6 +1,5 @@
 #include "about.h"
-#include <QLayout>
-#include <QtWidgets>
+
 
 About::About(QDialog *parent) : QDialog(parent)
 {
@@ -12,7 +11,7 @@ About::About(QDialog *parent) : QDialog(parent)
 	button = new QPushButton(tr("Ok"));
 	connect(button, SIGNAL(clicked()), this, SLOT(close()));
 
-	QVBoxLayout *mainLayout = new QVBoxLayout;
+	mainLayout = new QVBoxLayout;
 	mainLayout->addWidget(textAbout);
 	mainLayout->addWidget(button);
 	setLayout(mainLayout);
@@ -23,8 +22,4 @@ About::About(QDialog *parent) : QDialog(parent)
 
 About::~About()
 {
-	if (button != nullptr)
-		delete button;
-	if (textAbout != nullptr)
-		delete textAbout;
 }

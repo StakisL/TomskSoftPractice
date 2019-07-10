@@ -2,6 +2,8 @@
 #define ABOUT_H
 
 #include <QDialog>
+#include <QLayout>
+#include <QtWidgets>
 
 class QLabel;
 class QPushButton;
@@ -14,12 +16,13 @@ class About : public QDialog
 	Q_OBJECT
 
 public:
-	About(QDialog *parent = 0);
+	explicit About(QDialog *parent = 0);
 	~About();
 
 private:
 	QPushButton *button;
 	QLabel *textAbout;
+	QVBoxLayout *mainLayout;
 };
 
 #endif

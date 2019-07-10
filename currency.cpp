@@ -5,6 +5,7 @@
 Currency::Currency(QString _typeCurrency)
 {
 	typeCurrency = _typeCurrency;
+	isBase = false;
 }
 
 double Currency::getRatioCurrency() const
@@ -35,6 +36,11 @@ bool Currency::getBase() const
 void Currency::setBase(bool _isBase)
 {
 	isBase = _isBase;
+}
+
+double Currency::getValue(int value)
+{
+	return value * ratioCurrency;
 }
 
 Currency::~Currency()
