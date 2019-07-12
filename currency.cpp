@@ -1,40 +1,54 @@
 #include "currency.h"
 
-
-
-Currency::Currency(QString _typeCurrency)
+Currency::Currency(QString typeCurrency)
 {
+<<<<<<< HEAD
+	_typeCurrency = typeCurrency;
+	_isBase = false;
+=======
 	typeCurrency = _typeCurrency;
+	isBase = false;
+>>>>>>> 0ff7d378ef9884527ad3902d65f156881c8e718b
 }
 
 double Currency::getRatioCurrency() const
 {
-	return ratioCurrency;
+	return _ratioCurrency;
 }
 
-void Currency::setRatioCurrency(double _ratioCurrency)
+void Currency::setRatioCurrency(double ratioCurrency)
 {
-	ratioCurrency = _ratioCurrency;
+	_ratioCurrency = ratioCurrency;
 }
 
 QString Currency::getTypeCurrency() const
 {
-	return typeCurrency;
+	return _typeCurrency;
 }
 
-void Currency::setTypeCurrency(QString _typeCurrency)
+void Currency::setTypeCurrency(QString typeCurrency)
 {
-	typeCurrency = _typeCurrency;
+	_typeCurrency = typeCurrency;
 }
 
 bool Currency::getBase() const
 {
-	return isBase;
+	return _isBase;
 }
 
-void Currency::setBase(bool _isBase)
+void Currency::setBase(bool isBase)
 {
-	isBase = _isBase;
+	_isBase = isBase;
+}
+
+double Currency::getValue(double value)
+{
+	return value * _ratioCurrency;
+}
+
+double Currency::getValue(int value)
+{
+	return value * ratioCurrency;
 }
 
 Currency::~Currency()

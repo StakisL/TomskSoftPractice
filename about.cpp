@@ -1,21 +1,27 @@
 #include "about.h"
-#include <QLayout>
-#include <QtWidgets>
+
 
 About::About(QDialog *parent) : QDialog(parent)
 {
-	textAbout = new QLabel;
-	textAbout->setText(tr("Summer practice programm. "
+	_textAbout = new QLabel(this);
+	_textAbout->setText(tr("Summer practice programm. "
 		                  "\nOnline converter. "
 		                  "\nThe work was performed by Lebel S.S."));
 	
-	button = new QPushButton(tr("Ok"));
-	connect(button, SIGNAL(clicked()), this, SLOT(close()));
+	_button = new QPushButton(tr("Ok"),this);
+	connect(_button, &QPushButton::clicked, this, &About::close);
 
-	QVBoxLayout *mainLayout = new QVBoxLayout;
+<<<<<<< HEAD
+	_mainLayout = new QVBoxLayout(this);
+	_mainLayout->addWidget(_textAbout);
+	_mainLayout->addWidget(_button);
+	setLayout(_mainLayout);
+=======
+	mainLayout = new QVBoxLayout;
 	mainLayout->addWidget(textAbout);
 	mainLayout->addWidget(button);
 	setLayout(mainLayout);
+>>>>>>> 0ff7d378ef9884527ad3902d65f156881c8e718b
 
 	this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
@@ -23,8 +29,4 @@ About::About(QDialog *parent) : QDialog(parent)
 
 About::~About()
 {
-	if (button != nullptr)
-		delete button;
-	if (textAbout != nullptr)
-		delete textAbout;
 }
