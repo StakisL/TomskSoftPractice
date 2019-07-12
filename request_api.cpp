@@ -29,7 +29,7 @@ void RequestAPI::replyFinished()
 	if (reply->error() == QNetworkReply::NoError)
 	{
 		/*
-		    Ïàðñèíã ïîëó÷åííûõ äàííûõ.
+		    ÃÃ Ã°Ã±Ã¨Ã­Ã£ Ã¯Ã®Ã«Ã³Ã·Ã¥Ã­Ã­Ã»Ãµ Ã¤Ã Ã­Ã­Ã»Ãµ.
 		*/
 		QJsonDocument content = QJsonDocument::fromJson(reply->readAll());
 		QJsonObject root = content.object();
