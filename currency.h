@@ -22,17 +22,9 @@ public:
 	void setRatioCurrency(double _ratioCurrency);
 	void setTypeCurrency(QString _typeCurrency);
 	void setBase(bool _isBase);
-<<<<<<< HEAD
-<<<<<<< HEAD
 
 
 	double getValue(double value);
-=======
-=======
->>>>>>> 0ff7d378ef9884527ad3902d65f156881c8e718b
-	double getValue(int value);
-	~Currency();
->>>>>>> 0ff7d378ef9884527ad3902d65f156881c8e718b
 
 private:
 	QString _typeCurrency;

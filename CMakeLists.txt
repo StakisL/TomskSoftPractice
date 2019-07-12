@@ -20,18 +20,8 @@ set(PROJECT_SOURCE
     about.h
     currency.cpp
     currency.h
-<<<<<<< HEAD
-<<<<<<< HEAD
     request_api.cpp
     request_api.h
-=======
-    parse.cpp
-    parse.h
->>>>>>> 0ff7d378ef9884527ad3902d65f156881c8e718b
-=======
-    parse.cpp
-    parse.h
->>>>>>> 0ff7d378ef9884527ad3902d65f156881c8e718b
     )
 
 add_executable(${PROJECT_NAME} WIN32 ${PROJECT_SOURCE})	

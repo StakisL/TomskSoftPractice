@@ -1,12 +1,15 @@
-<<<<<<< HEAD:main_window.h
-#ifndef WIDGET_H
-#define WIDGET_H
+#ifndef MAIN_WINDOW_H
+#define MAIN_WINDOW_H
 
-#include <QtWidgets>
+#include <QWidget>
 #include <QVector>
 #include <QLayout>
+#include <QDoubleValidator>
+#include <QFormLayout>
+#include <QLocale>
 #include "currency.h"
-#include "parse.h"
+#include "request_api.h"
+
 
 class QGroupBox;
 class QLabel;
@@ -14,116 +17,50 @@ class QLineEdit;
 class QPushButton;
 class QTextEdit;
 class QComboBox;
-
+class QFormLayout;
+class QMenuBar;
 /*
-    Êëàññ îïèñûâàåò îñíîâíóþ ôîðìó è åå êîìïîíåíòû.
+    ����� ��������� �������� ����� � �� ����������.
 */
 
-class mainWindow : public QWidget
+class MainWindow : public QWidget
 {
 	Q_OBJECT
 
 public:
-	explicit mainWindow(QWidget *parent = 0);
-	~mainWindow();
-
-public slots:
-	void createWindow();
-	void doConvert();
-	void onReplyAccept();
-
+	explicit MainWindow(QWidget *parent = nullptr);
+	~MainWindow();
 
 private:
-	void createGridGroupBox();
-	void createFormGroupBox();
+	void createAboutWindow();
+	void doConvert();
+	void onReplyAccept();
+	void setEnableButton();
 
-	enum { NumGridRows = 5};
+	void createResultConvertBox();
+	void createBaseCurrencyBox();
 
-	QPushButton *aboutButton;
-	QPushButton *submitButton;
+	QPushButton *_submitButton;
 
-	QGroupBox *gridGroupBox;
-	QGroupBox *formGroupBox;
+	QGroupBox *_gridGroupBox;
+	QGroupBox *_formGroupBox;
 
-	QVBoxLayout *mainLayout;
-	QFormLayout *formLayout;
-	QGridLayout *gridLayout;
+	QVBoxLayout *_mainLayout;
+	QFormLayout *_formLayout;
+	QGridLayout *_gridLayout;
+	QMenuBar *_about;
 
-	QLabel *currencyCollums[NumGridRows];
-	QLabel *valueCollums[NumGridRows];
-	QLabel *valueLabel;
-	QLabel *currencyLabel;
+	QVector<QLabel*> _currencyCollums;
+	QVector<QLabel*> _valueCollums;
 
-	QLineEdit *valueEdit;
-	QComboBox *currencyBox;
+	QLabel *_valueLabel;
+	QLabel *_currencyLabel;
 
-	QVector<Currency*> currencyWired;
-	RequestAPI *parserRequest;
+	QLineEdit *_valueEdit;
+	QComboBox *_currencyBox;
+
+	QVector<Currency*> _currencyWired;
+	RequestAPI *_parserRequest;
 };
 
 #endif
-=======
-#ifndef WIDGET_H
-#define WIDGET_H
-
-#include <QtWidgets>
-#include <QVector>
-#include <QLayout>
-#include "currency.h"
-#include "parse.h"
-
-class QGroupBox;
-class QLabel;
-class QLineEdit;
-class QPushButton;
-class QTextEdit;
-class QComboBox;
-
-/*
-    Êëàññ îïèñûâàåò îñíîâíóþ ôîðìó è åå êîìïîíåíòû.
-*/
-
-class mainWindow : public QWidget
-{
-	Q_OBJECT
-
-public:
-	explicit mainWindow(QWidget *parent = 0);
-	~mainWindow();
-
-public slots:
-	void createWindow();
-	void doConvert();
-	void onReplyAccept();
-
-
-private:
-	void createGridGroupBox();
-	void createFormGroupBox();
-
-	enum { NumGridRows = 5};
-
-	QPushButton *aboutButton;
-	QPushButton *submitButton;
-
-	QGroupBox *gridGroupBox;
-	QGroupBox *formGroupBox;
-
-	QVBoxLayout *mainLayout;
-	QFormLayout *formLayout;
-	QGridLayout *gridLayout;
-
-	QLabel *currencyCollums[NumGridRows];
-	QLabel *valueCollums[NumGridRows];
-	QLabel *valueLabel;
-	QLabel *currencyLabel;
-
-	QLineEdit *valueEdit;
-	QComboBox *currencyBox;
-
-	QVector<Currency*> currencyWired;
-	RequestAPI *parserRequest;
-};
-
-#endif
->>>>>>> 0ff7d378ef9884527ad3902d65f156881c8e718b:main_window.h
