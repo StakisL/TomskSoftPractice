@@ -12,32 +12,30 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 	_currencyWired.push_back(new Currency("CAD"));
 
 	_parserRequest = new RequestAPI();
-	connect(_parserRequest, &RequestAPI::replyAccepted, this, &MainWindow::onReplyAccept);
 
 	createBaseCurrencyBox();
 	createResultConvertBox();
 
 	_about = new QMenuBar(this);
 	_about->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-	QMenu *menu = new QMenu("&Help");
-	QAction *action = menu->addAction("&About");
-	connect(action, &QAction::triggered, this, &MainWindow::createAboutWindow);
-	_about->addMenu(menu);
+	_menu = new QMenu("&Help");
+	_action = _menu->addAction("&About");
+	
+	_about->addMenu(_menu);
 	_about->show();
 
 	_mainLayout = new QVBoxLayout(this);
 	_mainLayout->addWidget(_about);
 	_mainLayout->addWidget(_formGroupBox);
 	_mainLayout->addWidget(_gridGroupBox);
-	
+
 	setLayout(_mainLayout);
+	
+	connect(_parserRequest, &RequestAPI::replyAccepted, this, &MainWindow::onReplyAccept);
+	connect(_action, &QAction::triggered, this, &MainWindow::createAboutWindow);
 }
 
 
-/*
-    Функция создает GridLayout на которой отображаются
-	Валюты, их курс и переведенная сумма.
-*/
 void MainWindow::createResultConvertBox()
 {
 	_gridGroupBox = new QGroupBox(tr("Result convert"),this);
@@ -63,31 +61,35 @@ void MainWindow::createResultConvertBox()
 }
 
 
-/*
-    Создает FormLayout который служит для ввода базовой валюты и суммы
-	для перевода, так же содержит текущую дату.
-*/
 void MainWindow::createBaseCurrencyBox()
 {
-	QDate dateToDay = QDate::currentDate();
-	_formGroupBox = new QGroupBox(dateToDay.toString("dd.MM.yy"),this);
+	_formGroupBox = new QGroupBox(this);
 	_formGroupBox->setFixedHeight(100);
 	_formLayout = new QFormLayout(this);
 
 	_submitButton = new QPushButton("Submit",this);
 	_submitButton->setDisabled(true);
 
+	_dateToDay = _dateToDay.currentDate();
+	QDate minimumDate(_dateToDay.year() - 1, _dateToDay.month(),
+		_dateToDay.day());
+	_calendar = new QDateEdit(this);
+	_calendar->setDateRange(minimumDate,_dateToDay);
+	_calendar->setCalendarPopup(true);
+	_calendar->setDate(_dateToDay);
+
 	_valueLabel = new QLabel(tr("Value:"),this);
 	_currencyLabel = new QLabel(tr("Currency:"),this);
 
 	_valueEdit = new QLineEdit();
+
 	/*Устанавливаю правила ввода в lineEdit(только числа, максимум 6,
 	с максимум 3 знаками после запятой*/
 	_valueEdit->setValidator(new QRegExpValidator
 	(QRegExp("[0-9]{0,6}\[.]{0,1}\[0-9]{0,3}$")));
-	connect(_valueEdit, &QLineEdit::textEdited, this, &MainWindow::setEnableButton);
-	_currencyBox = new QComboBox(this);
 	
+
+	_currencyBox = new QComboBox(this);
 	for (int i = 0; i < _currencyWired.size(); i++)
 	{
 		_currencyBox->addItem(_currencyWired[i]->getTypeCurrency());
@@ -95,11 +97,14 @@ void MainWindow::createBaseCurrencyBox()
 
 	_formLayout->addRow(_valueLabel, _valueEdit);
 	_formLayout->addRow(_currencyLabel, _currencyBox);
-	_formLayout->addRow(_submitButton);
+	_formLayout->addRow(_calendar, _submitButton);
 	_formGroupBox->setLayout(_formLayout);
 
+	connect(_valueEdit, &QLineEdit::textEdited, this, &MainWindow::setEnableButton);
 	connect(_submitButton, &QPushButton::clicked, this, &MainWindow::doConvert);
+	connect(_calendar, &QDateEdit::dateChanged, this, &MainWindow::selectDate);
 }
+
 
 void MainWindow::setEnableButton()
 {
@@ -112,9 +117,8 @@ void MainWindow::setEnableButton()
 		_submitButton->setEnabled(false);
 	}
 }
-/*
-    Слот отправляет гет-запрос на внешную API
-*/
+
+
 void MainWindow::doConvert()
 {
 	int baseCurrencyIndex = 0;
@@ -128,13 +132,12 @@ void MainWindow::doConvert()
 	}
 	_currencyWired.move(baseCurrencyIndex, 0);
 
-	_parserRequest->getRequest(_currencyWired);
+	_parserRequest->getRequest(_currencyWired, _dateToDay);
 	_submitButton->setEnabled(false);
 }
 
-/*
-    Слот обрабатывает данные полученные в результате гет-запроса
-*/
+
+
 void MainWindow::onReplyAccept()
 {
 	_currencyWired = _parserRequest->getResultParse();
@@ -153,6 +156,11 @@ void MainWindow::onReplyAccept()
 }
 
 
+void MainWindow::selectDate(const QDate &date)
+{
+	_dateToDay = date;
+}
+
 
 void MainWindow::createAboutWindow()
 {
@@ -161,7 +169,4 @@ void MainWindow::createAboutWindow()
 }
 
 
-MainWindow::~MainWindow()
-{
-	
-}
+MainWindow::~MainWindow() {}

@@ -19,9 +19,7 @@ class QTextEdit;
 class QComboBox;
 class QFormLayout;
 class QMenuBar;
-/*
-    Класс описывает основную форму и ее компоненты.
-*/
+class QDateEdit;
 
 class MainWindow : public QWidget
 {
@@ -36,9 +34,12 @@ private:
 	void doConvert();
 	void onReplyAccept();
 	void setEnableButton();
+	void selectDate(const QDate &date);
 
 	void createResultConvertBox();
 	void createBaseCurrencyBox();
+
+	QDateEdit *_calendar;
 
 	QPushButton *_submitButton;
 
@@ -48,7 +49,10 @@ private:
 	QVBoxLayout *_mainLayout;
 	QFormLayout *_formLayout;
 	QGridLayout *_gridLayout;
+
 	QMenuBar *_about;
+	QMenu *_menu;
+	QAction *_action;
 
 	QVector<QLabel*> _currencyCollums;
 	QVector<QLabel*> _valueCollums;
@@ -57,10 +61,13 @@ private:
 	QLabel *_currencyLabel;
 
 	QLineEdit *_valueEdit;
-	QComboBox *_currencyBox;
 
+	QComboBox *_currencyBox;
+	
+	QDate _dateToDay;
 	QVector<Currency*> _currencyWired;
 	RequestAPI *_parserRequest;
 };
 
 #endif
+

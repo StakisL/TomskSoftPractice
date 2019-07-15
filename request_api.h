@@ -6,6 +6,7 @@
 #include <QNetworkReply>
 #include <QObject>
 #include <QString>
+#include <QDate>
 #include "Currency.h"
 
 class RequestAPI : public QNetworkAccessManager
@@ -16,7 +17,7 @@ public:
 	~RequestAPI();
 
 	QVector<Currency*> getResultParse() const;
-	void getRequest(QVector<Currency*> currency);
+	void getRequest(QVector<Currency*> currency, QDate date);
 
 signals:
 	void replyAccepted();
@@ -28,8 +29,7 @@ private:
 	QNetworkAccessManager *_manager;
 	QNetworkReply *_reply;
 	QUrl _url;
-	
-
+	QDate _date;
 };
 #endif
 
