@@ -10,12 +10,15 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 	_currencyWired.push_back(new Currency("AUD"));
 	_currencyWired.push_back(new Currency("JPY"));
 	_currencyWired.push_back(new Currency("CAD"));
-	_parserRequest = new RequestAPI(_currencyWired);
+
+	_parserRequest = new RequestAPI();
+	connect(_parserRequest, &RequestAPI::replyAccepted, this, &MainWindow::onReplyAccept);
 
 	createBaseCurrencyBox();
 	createResultConvertBox();
 
 	_about = new QMenuBar(this);
+	_about->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QMenu *menu = new QMenu("&Help");
 	QAction *action = menu->addAction("&About");
 	connect(action, &QAction::triggered, this, &MainWindow::createAboutWindow);
@@ -96,7 +99,6 @@ void MainWindow::createBaseCurrencyBox()
 	_formGroupBox->setLayout(_formLayout);
 
 	connect(_submitButton, &QPushButton::clicked, this, &MainWindow::doConvert);
-	
 }
 
 void MainWindow::setEnableButton()
@@ -115,8 +117,18 @@ void MainWindow::setEnableButton()
 */
 void MainWindow::doConvert()
 {
-	connect(_parserRequest, &RequestAPI::replyAccepted, this, &MainWindow::onReplyAccept);
-	_parserRequest->getRequest();
+	int baseCurrencyIndex = 0;
+
+	for (int i = 0; i < _currencyWired.size(); i++)
+	{
+		if (_currencyWired[i]->getTypeCurrency() == _currencyBox->currentText())
+		{
+			baseCurrencyIndex = i;
+		}
+	}
+	_currencyWired.move(baseCurrencyIndex, 0);
+
+	_parserRequest->getRequest(_currencyWired);
 	_submitButton->setEnabled(false);
 }
 
@@ -125,63 +137,17 @@ void MainWindow::doConvert()
 */
 void MainWindow::onReplyAccept()
 {
-	QString takeBaseCurrency = _currencyBox->currentText();
 	_currencyWired = _parserRequest->getResultParse();
-	int counterCollums = 0, temp = 0, baseCurrency = 0;
-	
-	for (int i = 0; i < _currencyWired.size(); i++)
-	{
-		//Условие убирает предыдущее базовое значение.
-		if (takeBaseCurrency != _currencyWired[i]->getTypeCurrency() && _currencyWired[i]->getBase())
-		{
-			_currencyWired[i]->setBase(false);
-		}
-
-		/*
-		Так как гет-запрос возвращает курс валют относительно базовой,
-		а ей является всегда USD,для того чтобы верно устнановить значения коэффициентов
-		нам нужен индекс объекта в котором находится валюта USD
-		*/
-		if (_currencyWired[i]->getTypeCurrency() == "USD")
-		{
-			temp = i;
-		}
-
-		if (takeBaseCurrency == _currencyWired[i]->getTypeCurrency())
-		{
-			baseCurrency = i;
-		}
-	}
-
-	//Устанавливаем значения базовой валюты
-	_currencyWired[baseCurrency]->setBase(true);
-	_currencyWired[temp]->setRatioCurrency(double(1 / _currencyWired[baseCurrency]->getRatioCurrency()));
-	_currencyWired[baseCurrency]->setRatioCurrency(1.0);
-
-	
-    //Перерасчитываем коэффициенты для валют относительно базовой.
-	for (int i = 0; i < _currencyWired.size(); i++)
-	{
-		if (i != baseCurrency && i != temp)
-		{
-			_currencyWired[i]->setRatioCurrency(double(_currencyWired[temp]->getRatioCurrency()
-				*_currencyWired[i]->getRatioCurrency()));
-		}
-	}
-
+	int counterCollums = 0;
 	//Отображаем результаты в основном окне.
-	for (int i = 0; i < _currencyWired.size(); ++i)
+	for (int i = 1; i < _currencyWired.size(); ++i)
 	{
-		if (!_currencyWired[i]->getBase())
-		{
 			_currencyCollums[counterCollums]->setText(_currencyWired[i]->getTypeCurrency() + ": "
 				+ QString::number(_currencyWired[i]->getRatioCurrency()));
 
 			_valueCollums[counterCollums]->setText(_currencyWired[i]->getTypeCurrency() + ": "
 				+ QString::number(_currencyWired[i]->getValue((_valueEdit->text().toDouble()))));
 			counterCollums++;
-		}
-
 	}
 	_submitButton->setEnabled(true);
 }

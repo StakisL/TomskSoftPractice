@@ -12,11 +12,11 @@ class RequestAPI : public QNetworkAccessManager
 {
 	Q_OBJECT
 public:
-	RequestAPI(QVector<Currency*> currency, QNetworkAccessManager *parent = nullptr);
+	RequestAPI(QNetworkAccessManager *parent = nullptr);
 	~RequestAPI();
 
 	QVector<Currency*> getResultParse() const;
-	void getRequest();
+	void getRequest(QVector<Currency*> currency);
 
 signals:
 	void replyAccepted();
