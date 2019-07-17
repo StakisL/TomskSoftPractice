@@ -4,7 +4,10 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
-#include <QObject>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonValue>
+#include <QJsonObject>
 #include <QString>
 #include <QDate>
 #include "Currency.h"
@@ -21,6 +24,7 @@ public:
 
 signals:
 	void replyAccepted();
+	void errorRequest();
 
 private:
 	void replyFinished();

@@ -5,6 +5,12 @@ Currency::Currency(QString typeCurrency)
 	_typeCurrency = typeCurrency;
 }
 
+Currency::Currency(QString typeCurrency, double ratioCurrency)
+{
+	_typeCurrency = typeCurrency;
+	_ratioCurrency = ratioCurrency;
+}
+
 double Currency::getRatioCurrency() const
 {
 	return _ratioCurrency;

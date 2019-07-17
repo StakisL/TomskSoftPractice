@@ -6,7 +6,8 @@
 class Currency
 {
 public:
-	Currency(QString _typeCurrency);
+	Currency(QString typeCurrency);
+	Currency(QString typeCurrency, double ratioCurrency);
 	~Currency();
 
 	double getRatioCurrency() const;

@@ -7,9 +7,12 @@
 #include <QDoubleValidator>
 #include <QFormLayout>
 #include <QLocale>
+#include <QDate>
+#include <QStatusBar>
 #include "currency.h"
 #include "request_api.h"
-
+#include "save_data.h"
+#include "about.h"
 
 class QGroupBox;
 class QLabel;
@@ -20,6 +23,8 @@ class QComboBox;
 class QFormLayout;
 class QMenuBar;
 class QDateEdit;
+class QMenu; 
+
 
 class MainWindow : public QWidget
 {
@@ -35,6 +40,9 @@ private:
 	void onReplyAccept();
 	void setEnableButton();
 	void selectDate(const QDate &date);
+	void requestInfo();
+
+	void displayResult();
 
 	void createResultConvertBox();
 	void createBaseCurrencyBox();
@@ -50,12 +58,13 @@ private:
 	QFormLayout *_formLayout;
 	QGridLayout *_gridLayout;
 
+	QStatusBar *_information;
 	QMenuBar *_about;
 	QMenu *_menu;
 	QAction *_action;
 
-	QVector<QLabel*> _currencyCollums;
-	QVector<QLabel*> _valueCollums;
+	QVector<QLabel*> _currencyColumns;
+	QVector<QLabel*> _valueColumns;
 
 	QLabel *_valueLabel;
 	QLabel *_currencyLabel;
@@ -65,6 +74,7 @@ private:
 	QComboBox *_currencyBox;
 	
 	QDate _dateToDay;
+	SaveData _saveData;
 	QVector<Currency*> _currencyWired;
 	RequestAPI *_parserRequest;
 };

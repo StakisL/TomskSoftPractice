@@ -1,8 +1,6 @@
 #include "request_api.h"
-#include <QJsonDocument>
-#include <QJsonArray>
-#include <QJsonValue>
-#include <QJsonObject>
+
+
 
 RequestAPI::RequestAPI(QNetworkAccessManager *parent) 
 	: QNetworkAccessManager(parent)
@@ -48,9 +46,14 @@ void RequestAPI::replyFinished()
 				}
 			}
 		}
+		_reply->deleteLater();
+		emit replyAccepted();
 	}
-	_reply->deleteLater();
-	emit replyAccepted();
+	else
+	{
+		emit errorRequest();
+	}
+	
 }
 
 QVector<Currency*> RequestAPI::getResultParse() const
