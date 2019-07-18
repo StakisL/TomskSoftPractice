@@ -15,9 +15,12 @@ void RequestAPI::getRequest(QVector<Currency*> currency, QDate date)
 	_currencyWired = currency;
 	_url.setUrl(QString("http://free.currconv.com/api/v7/convert?q="
 		"%1_%2,%1_%3,%1_%4,%1_%5,%1_%6&compact=ultra&date=%7&apiKey=9942582d9e7fb170c046")
-		.arg(_currencyWired[0]->getTypeCurrency()).arg(_currencyWired[1]->getTypeCurrency())
-		.arg(_currencyWired[2]->getTypeCurrency()).arg(_currencyWired[3]->getTypeCurrency())
-		.arg(_currencyWired[4]->getTypeCurrency()).arg(_currencyWired[5]->getTypeCurrency())
+		.arg(_currencyWired[0]->getTypeCurrency())
+		.arg(_currencyWired[1]->getTypeCurrency())
+		.arg(_currencyWired[2]->getTypeCurrency())
+		.arg(_currencyWired[3]->getTypeCurrency())
+		.arg(_currencyWired[4]->getTypeCurrency())
+		.arg(_currencyWired[5]->getTypeCurrency())
 		.arg(date.toString("yyyy-MM-dd")));
 
 	QNetworkRequest request(_url);

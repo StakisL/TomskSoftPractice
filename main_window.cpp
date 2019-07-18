@@ -1,4 +1,3 @@
-
 #include "main_window.h"
 
 
@@ -76,6 +75,7 @@ void MainWindow::createBaseCurrencyBox()
 	_dateToDay = _dateToDay.currentDate();
 	QDate minimumDate(_dateToDay.year() - 1, _dateToDay.month(),
 		_dateToDay.day());
+
 	_calendar = new QDateEdit(this);
 	_calendar->setDateRange(minimumDate,_dateToDay);
 	_calendar->setCalendarPopup(true);
@@ -142,7 +142,9 @@ void MainWindow::doConvert()
 		//Записываем актуальые данные
 		_currencyWired = _saveData.loadValue(_currencyWired[0]->getTypeCurrency(),
 			_dateToDay);
+
 		displayResult();
+
 		_information->showMessage("Data load from disk!", 5000);
 	}
 	else

@@ -18,6 +18,7 @@ public:
 
 	double getValue(double value);
 
+
 private:
 	QString _typeCurrency;
 	double _ratioCurrency;
