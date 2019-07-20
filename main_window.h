@@ -7,9 +7,13 @@
 #include <QDoubleValidator>
 #include <QFormLayout>
 #include <QLocale>
+#include <QDate>
+#include <QStatusBar>
+#include <QKeyEvent>
 #include "currency.h"
 #include "request_api.h"
-
+#include "save_data.h"
+#include "about.h"
 
 class QGroupBox;
 class QLabel;
@@ -19,9 +23,9 @@ class QTextEdit;
 class QComboBox;
 class QFormLayout;
 class QMenuBar;
-/*
-    Класс описывает основную форму и ее компоненты.
-*/
+class QDateEdit;
+class QMenu; 
+
 
 class MainWindow : public QWidget
 {
@@ -31,16 +35,28 @@ public:
 	explicit MainWindow(QWidget *parent = nullptr);
 	~MainWindow();
 
+protected:
+	void keyPressEvent(QKeyEvent *event) override;
+
 private:
 	void createAboutWindow();
-	void doConvert();
+	void convert();
 	void onReplyAccept();
 	void setEnableButton();
+	void selectDate(const QDate &date);
+
+	void displayResult();
 
 	void createResultConvertBox();
 	void createBaseCurrencyBox();
 
-	QPushButton *_submitButton;
+signals:
+	void pressEnter();
+
+private:
+	QDateEdit *_calendar;
+
+	QPushButton *_convertButton;
 
 	QGroupBox *_gridGroupBox;
 	QGroupBox *_formGroupBox;
@@ -48,19 +64,26 @@ private:
 	QVBoxLayout *_mainLayout;
 	QFormLayout *_formLayout;
 	QGridLayout *_gridLayout;
-	QMenuBar *_about;
 
-	QVector<QLabel*> _currencyCollums;
-	QVector<QLabel*> _valueCollums;
+	QMenuBar *_about;
+	QMenu *_menu;
+	QAction *_action;
+
+	QVector<QLabel*> _currencyColumns;
+	QVector<QLabel*> _valueColumns;
 
 	QLabel *_valueLabel;
 	QLabel *_currencyLabel;
 
 	QLineEdit *_valueEdit;
-	QComboBox *_currencyBox;
 
+	QComboBox *_currencyBox;
+	
+	QDate _dateToDay;
+	SaveData _saveData;
 	QVector<Currency*> _currencyWired;
 	RequestAPI *_parserRequest;
 };
 
 #endif
+

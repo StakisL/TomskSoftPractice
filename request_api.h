@@ -4,19 +4,23 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
-#include <QObject>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonValue>
+#include <QJsonObject>
 #include <QString>
+#include <QDate>
 #include "Currency.h"
 
 class RequestAPI : public QNetworkAccessManager
 {
 	Q_OBJECT
 public:
-	RequestAPI(QVector<Currency*> currency, QNetworkAccessManager *parent = nullptr);
+	RequestAPI(QNetworkAccessManager *parent = nullptr);
 	~RequestAPI();
 
 	QVector<Currency*> getResultParse() const;
-	void getRequest();
+	void getRequest(QVector<Currency*> currency, QDate date);
 
 signals:
 	void replyAccepted();
@@ -28,8 +32,7 @@ private:
 	QNetworkAccessManager *_manager;
 	QNetworkReply *_reply;
 	QUrl _url;
-	
-
+	QDate _date;
 };
 #endif
 

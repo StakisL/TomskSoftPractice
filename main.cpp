@@ -1,13 +1,13 @@
 #include <QApplication>
-#include <QSplashScreen>
-#include <QTimer>
-#include <main_window.h>
+#include "main_window.h"
+#include "load_screen.h"
 
 int main(int argc, char *argv[])
 {
 	QApplication app(argc, argv);
-	MainWindow widget;
-	widget.show();
-
+	//MainWindow mainWindow;
+	LoadScreen loadScreen(QPixmap(":/pic/logo.png"));
+	
+	//mainWindow.show();
 	return app.exec();
 }

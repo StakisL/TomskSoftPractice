@@ -3,33 +3,25 @@
 
 #include <QString>
 
-/*
-    Класс описывает валюты и ее состояния.
-	typeCurrency - Тип валюты(рублы,доллары и т.д.)
-	ratioCurrency - Коэффициент валюты относительно базовой
-	isBase - true если валюта базовая.
-*/
 class Currency
 {
 public:
-	Currency(QString _typeCurrency);
+	Currency(QString typeCurrency);
+	Currency(QString typeCurrency, double ratioCurrency);
 	~Currency();
 
 	double getRatioCurrency() const;
 	QString getTypeCurrency() const;
-	bool getBase() const;
 
 	void setRatioCurrency(double _ratioCurrency);
 	void setTypeCurrency(QString _typeCurrency);
-	void setBase(bool _isBase);
-
 
 	double getValue(double value);
+
 
 private:
 	QString _typeCurrency;
 	double _ratioCurrency;
-	bool _isBase;
 };
 
 #endif CURRENCY_H

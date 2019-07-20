@@ -2,15 +2,14 @@
 #define ABOUT_H
 
 #include <QDialog>
-#include <QLayout>
 #include <QtWidgets>
+#include <QLayout>
+#include <QLabel>
+#include <QPushButton>
 
 class QLabel;
 class QPushButton;
 
-/*
-    Класс описывает форму About
-*/
 class About : public QDialog
 {
 	Q_OBJECT
