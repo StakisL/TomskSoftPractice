@@ -2,27 +2,24 @@
 #define CURRENCY_H
 
 #include <QString>
+#include <QPair>
+#include <QMap>
 
-class Currency
+enum class CurrencyType
 {
-public:
-	Currency(QString typeCurrency);
-	Currency(QString typeCurrency, double ratioCurrency);
-	~Currency();
-
-	double getRatioCurrency() const;
-	QString getTypeCurrency() const;
-
-	void setRatioCurrency(double _ratioCurrency);
-	void setTypeCurrency(QString _typeCurrency);
-
-	double getValue(double value);
-
-
-private:
-	QString _typeCurrency;
-	double _ratioCurrency;
+	USD,
+	AUD,
+	CAD,
+	RUB,
+	JPY,
+	EUR
 };
+
+typedef QPair<CurrencyType, CurrencyType> CurrenciesPair;
+
+QMap<CurrenciesPair, double> init();
+
+QString currencyTypeToString(CurrencyType type);
 
 #endif CURRENCY_H
 

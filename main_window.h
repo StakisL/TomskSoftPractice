@@ -80,8 +80,10 @@ private:
 	QComboBox *_currencyBox;
 	
 	QDate _dateToDay;
+
+	QMap<CurrenciesPair, double> _currencies;
 	SaveData _saveData;
-	QVector<Currency*> _currencyWired;
+
 	RequestAPI *_parserRequest;
 };
 

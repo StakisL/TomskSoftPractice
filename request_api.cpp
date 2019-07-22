@@ -2,29 +2,50 @@
 
 
 
-RequestAPI::RequestAPI(QNetworkAccessManager *parent) 
+RequestAPI::RequestAPI(QMap<CurrenciesPair, double> currencies, QNetworkAccessManager *parent)
 	: QNetworkAccessManager(parent)
 {
-	_manager = new QNetworkAccessManager();
+	_currencies = currencies;
 }
 
-void RequestAPI::getRequest(QVector<Currency*> currency, QDate date)
+void RequestAPI::getRequest(QDate date)
 {
 	int i = 0; 
 	_date = date;
-	_currencyWired = currency;
-	_url.setUrl(QString("http://free.currconv.com/api/v7/convert?q="
-		"%1_%2,%1_%3,%1_%4,%1_%5,%1_%6&compact=ultra&date=%7&apiKey=9942582d9e7fb170c046")
-		.arg(_currencyWired[0]->getTypeCurrency())
-		.arg(_currencyWired[1]->getTypeCurrency())
-		.arg(_currencyWired[2]->getTypeCurrency())
-		.arg(_currencyWired[3]->getTypeCurrency())
-		.arg(_currencyWired[4]->getTypeCurrency())
-		.arg(_currencyWired[5]->getTypeCurrency())
+
+	/*
+	»спользуема€ API разрешает сделать запрос только 10 преобразований за 1 раз,
+	дл€ получение полного списка валют за день, используем в качестве общего запроса,
+	сразу 3 запроса.
+	*/
+	_urlFirst.setUrl(QString("http://free.currconv.com/api/v7/convert?q="
+		"USD_AUD,USD_CAD,USD_EUR,USD_JPY,USD_RUB,"
+		"RUB_AUD,RUB_CAD,RUB_EUR,RUB_JPY,RUB_USD"
+		"&compact=ultra&date=%1&apiKey=9942582d9e7fb170c046")
 		.arg(date.toString("yyyy-MM-dd")));
 
-	QNetworkRequest request(_url);
-	_reply = _manager->get(request);
+	_urlSecond.setUrl(QString("http://free.currconv.com/api/v7/convert?q="
+		"AUD_CAD,AUD_EUR,AUD_JPY,AUD_USD,AUD_RUB,"
+		"CAD_AUD,CAD_EUR,CAD_JPY,CAD_USD,CAD_RUB"
+		"&compact=ultra&date=%1&apiKey=9942582d9e7fb170c046")
+		.arg(date.toString("yyyy-MM-dd")));
+
+	_urlThird.setUrl(QString("http://free.currconv.com/api/v7/convert?q="
+		"EUR_AUD,EUR_JPY,EUR_CAD,EUR_USD,EUR_RUB,"
+		"JPY_AUD,JPY_EUR,JPY_CAD,JPY_USD,JPY_RUB"
+		"&compact=ultra&date=%1&apiKey=9942582d9e7fb170c046")
+		.arg(date.toString("yyyy-MM-dd")));
+
+	_countRequestSignals = 0;
+	makeRequest(_urlFirst);
+	makeRequest(_urlSecond);
+	makeRequest(_urlThird);
+}
+
+void RequestAPI::makeRequest(QUrl url)
+{
+	_manager = new QNetworkAccessManager();
+	_reply = _manager->get(QNetworkRequest(url));
 	connect(_reply, &QNetworkReply::finished, this, &RequestAPI::replyFinished);
 }
 
@@ -35,29 +56,47 @@ void RequestAPI::replyFinished()
 	if (_reply->error() == QNetworkReply::NoError)
 	{
 		QJsonDocument content = QJsonDocument::fromJson(_reply->readAll());
-		QJsonObject root = content.object();
-		QJsonObject innerRoot;
-		for (int i = 1; i < _currencyWired.size(); i++)
+		_resultRequest.enqueue(content.object());
+		_reply->deleteLater();
+
+		_countRequestSignals++;
+
+		if (_countRequestSignals == 3)
 		{
-			for (int j = 0 ; j < root.size(); j++)
+			_countRequestSignals = 0;
+			emit replyAccepted();
+		}
+	}
+	//FIXED ќЅ–јЅќ“ј“№ ќЎ»Ѕ ».
+}
+
+
+QMap<CurrenciesPair, double> RequestAPI::getResultParse()
+{
+	while(!_resultRequest.empty())
+	{
+		QJsonObject root = _resultRequest.dequeue();
+		QJsonObject innerRoot;
+
+		for (int i = 0; i < _currencies.size(); i++)
+		{
+			for (int j = 0; j < root.size(); j++)
 			{
-				if (root.keys().at(j).contains(_currencyWired[i]->getTypeCurrency()))
+				if (root.keys().at(j).contains(QString(currencyTypeToString(_currencies.keys().at(i).first)
+					+ "_" + (currencyTypeToString(_currencies.keys().at(i).second)))))
 				{
 					innerRoot = root[root.keys().at(j)].toObject();
-					_currencyWired[i]->setRatioCurrency(innerRoot[_date.toString("yyyy-MM-dd")]
-						.toDouble());
+					_currencies[CurrenciesPair(_currencies.keys().at(i).first, _currencies.keys().at(i).second)] =
+						innerRoot[_date.toString("yyyy-MM-dd")].toDouble();
 				}
 			}
 		}
-		_reply->deleteLater();
-		emit replyAccepted();
 	}
-	
+	return _currencies;
 }
 
-QVector<Currency*> RequestAPI::getResultParse() const
+RequestAPI::~RequestAPI() 
 {
-	return _currencyWired;
+	if (_reply != nullptr)
+		_reply->deleteLater();
 }
-
-RequestAPI::~RequestAPI() {}

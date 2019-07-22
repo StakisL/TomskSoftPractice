@@ -20,123 +20,64 @@ void SaveData::saveJson(QJsonDocument document, QString fileName)
 	_jsonFile.close();
 }
 
-void SaveData::saveData(QVector<Currency*> currencyWired, QDate date)
+void SaveData::saveData(QMap<CurrenciesPair, double> currencies, QDate date)
 {
-	_currencyWired = currencyWired;
+	_currencies = currencies;
 	_date = date;
-
-	QJsonArray resultRequestArray;
-	QJsonObject resultRequest;
-	QJsonDocument _jsonDocument;
-
 	_jsonDocument = loadData(_fileName);
+	_dateObject = _jsonDocument.object();
 
-	resultRequestArray = _jsonDocument.array();
-
-	resultRequest["ABase"] = _currencyWired[0]->getTypeCurrency();
-	resultRequest[date.toString("dd.MM.yyyy")] = QTime::currentTime()
-		.toString();
-
-	for (int i = 1; i < _currencyWired.size(); i++)
+	for (int i = 0; i < _currencies.size(); i++)
 	{
-		resultRequest.insert(_currencyWired[i]->getTypeCurrency()
-			, _currencyWired[i]->getRatioCurrency());
+		_recordObject["first"] = currencyTypeToString(_currencies.keys().at(i).first);
+		_recordObject["second"] = currencyTypeToString(_currencies.keys().at(i).second);
+		_recordObject["ratio"] = _currencies[CurrenciesPair(_currencies.keys().at(i).first,
+			_currencies.keys().at(i).second)];
+		_recordArray.append(_recordObject);
 	}
-
-	resultRequestArray.push_back(resultRequest);
-	_jsonDocument.setArray(resultRequestArray);
+	_dateObject[_date.toString("dd.MM.yyyy")] = _recordArray;
+	_jsonDocument.setObject(_dateObject);
 
 	saveJson(_jsonDocument, _fileName);
 }
 
-QVector<Currency*> SaveData::loadValue(QString baseCurrency, QDate date)
+void SaveData::loadValue(QMap<CurrenciesPair, double> &currencies, QDate date)
 {
-	QJsonArray arrayData;
-	QJsonObject objectData;
-
-	_currencyWired.clear();
-
-	arrayData = loadData(_fileName).array();
-
-	for (int i = 0; i < arrayData.size(); i++)
+	_dateObject = loadData(_fileName).object();
+	for (int i = 0; i < _dateObject.size(); i++)
 	{
-		objectData = arrayData.at(i).toObject();
-		if (objectData.keys().at(0) == date.toString("dd.MM.yyyy"))
+		if (_dateObject.keys().at(i) == date.toString("dd.MM.yyyy"))
 		{
-			if (objectData[objectData.keys().at(1)].toString() ==
-				baseCurrency)
+			_recordArray = _dateObject[_dateObject.keys().at(i)].toArray();
+		}
+	}
+
+	for (int i = 0; i < currencies.size(); i++)
+	{
+		for (int j = 0; j < _recordArray.size(); j++)
+		{
+			_recordObject = _recordArray.at(j).toObject();
+			if (_recordObject["first"] == currencyTypeToString(currencies.keys().at(i).first) &&
+				_recordObject["second"] == currencyTypeToString(currencies.keys().at(i).second))
 			{
-				if (date == QDate::currentDate())
-				{
-					if (_oldTime == QTime::fromString
-					(objectData[objectData.keys().at(0)].toString()))
-					{
-						_currencyWired.push_back(new Currency(baseCurrency, 1.0));
-						for (int i = 2; i < objectData.size(); i++)
-						{
-							_currencyWired.push_back(new Currency(objectData.keys().at(i)
-								, objectData[objectData.keys().at(i)].toDouble()));
-						}
-						break;
-					}
-				}
-				else
-				{
-					_currencyWired.push_back(new Currency(baseCurrency, 1.0));
-					for (int i = 2; i < objectData.size(); i++)
-					{
-						_currencyWired.push_back(new Currency(objectData.keys().at(i)
-							, objectData[objectData.keys().at(i)].toDouble()));
-					}
-					break;
-				}
+				currencies[CurrenciesPair(currencies.keys().at(i).first, currencies.keys().at(i).second)] 
+					= _recordObject["ratio"].toDouble();
 			}
 		}
 	}
-	return _currencyWired;
 }
 
-bool SaveData::checkData(QString baseCurrency, QDate date)
+
+bool SaveData::checkData(QDate date)
 {
-	QJsonArray arrayData;
-	QJsonObject objectData;
-	QJsonObject valueData;
+	_dateObject = loadData(_fileName).object();
 
-	arrayData = loadData(_fileName).array();
-
-	bool result = false;
-
-	for (int i = 0; i < arrayData.size(); i++)
+	for (int i = 0; i < _dateObject.size(); i++)
 	{
-		objectData = arrayData.at(i).toObject();
-		if (objectData.keys().at(0) == date.toString("dd.MM.yyyy"))
-		{
-			if (objectData[objectData.keys().at(1)].toString() == 
-				baseCurrency)
-			{
-				if (date == QDate::currentDate())
-				{
-					_oldTime = _oldTime.fromString(objectData[objectData.keys().at(0)]
-						.toString());;
-					_newTime = _newTime.currentTime();
-					/*Узнаем сколько милисеккунд прошло с последнего запроса
-					В 1 часу = 3600000 msec*/
-					int passedTime = (_newTime.hour() * 60 + _newTime.minute())
-						- (_oldTime.hour() * 60 + _oldTime.minute());
-					if (passedTime > 60 || passedTime > -60)
-					{
-						result = false;
-					}
-					result = true;
-				}
-				else
-				{
-					result = true;
-				}
-			}
-		}
+		if (_dateObject.keys().at(i) == date.toString("dd.MM.yyyy"))
+			return true;
 	}
-	return result;
+	return false;
 }
 
 

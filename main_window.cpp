@@ -3,15 +3,8 @@
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 {
-	_currencyWired.push_back(new Currency("RUB"));
-	_currencyWired.push_back(new Currency("USD"));
-	_currencyWired.push_back(new Currency("EUR"));
-	_currencyWired.push_back(new Currency("AUD"));
-	_currencyWired.push_back(new Currency("JPY"));
-	_currencyWired.push_back(new Currency("CAD"));
-
-	_parserRequest = new RequestAPI();
-
+	_currencies = init();
+	_parserRequest = new RequestAPI(_currencies);
 	createBaseCurrencyBox();
 	createResultConvertBox();
 
@@ -77,10 +70,12 @@ void MainWindow::createBaseCurrencyBox()
 	(QRegExp("[0-9]{0,6}[.]{0,1}[0-9]{0,3}$")));
 
 	_currencyBox = new QComboBox(this);
-	for (int i = 0; i < _currencyWired.size(); i++)
-	{
-		_currencyBox->addItem(_currencyWired[i]->getTypeCurrency());
-	}
+	_currencyBox->addItem("USD");
+	_currencyBox->addItem("AUD");
+	_currencyBox->addItem("CAD");
+	_currencyBox->addItem("JPY");
+	_currencyBox->addItem("EUR");
+	_currencyBox->addItem("RUB");
 
 	_dateToDay = _dateToDay.currentDate();
 	QDate minimumDate(_dateToDay.year() - 1, _dateToDay.month(),
@@ -110,67 +105,52 @@ void MainWindow::createBaseCurrencyBox()
 	connect(_calendar, &QDateEdit::dateChanged, this, &MainWindow::selectDate);
 }
 
-
 void MainWindow::setEnableButton()
 {
 	_convertButton->setEnabled(!_valueEdit->text().isEmpty());
 }
 
-
 void MainWindow::convert()
 {
-	int baseCurrencyIndex = 0;
-
-	if (_convertButton->isEnabled())
+	if (_saveData.checkData(_dateToDay))
 	{
-		for (int i = 0; i < _currencyWired.size(); i++)
-		{
-			if (_currencyWired[i]->getTypeCurrency() == _currencyBox->currentText())
-			{
-				baseCurrencyIndex = i;
-			}
-		}
-		_currencyWired.move(baseCurrencyIndex, 0);
-
-		//Проверяем существует ли актуальные данные в файле
-		if (_saveData.checkData(_currencyWired[0]->getTypeCurrency(),
-			_dateToDay))
-		{
-			//Записываем актуальые данные
-			_currencyWired = _saveData.loadValue(_currencyWired[0]->getTypeCurrency(),
-				_dateToDay);
-
-			displayResult();
-		}
-		else
-		{
-			_parserRequest->getRequest(_currencyWired, _dateToDay);
-			_convertButton->setEnabled(false);
-		}
+		_saveData.loadValue(_currencies, _dateToDay);
+		displayResult();
+	}
+	else
+	{
+		_parserRequest->getRequest(_dateToDay);
+		_convertButton->setEnabled(false);
 	}
 }
 
-
 void MainWindow::onReplyAccept()
 {
-	_currencyWired = _parserRequest->getResultParse();
+	_currencies = _parserRequest->getResultParse();
 	displayResult();
-	_saveData.saveData(_currencyWired, _dateToDay);
+
+	_saveData.saveData(_currencies, _dateToDay);
+
 	_convertButton->setEnabled(true);
 }
 
 void MainWindow::displayResult()
 {
-	
-	//Отображаем результаты в основном окне.
-	for (int i = 1; i < _currencyWired.size(); ++i)
+	int _countColumns = 1;
+	////Отображаем результаты в основном окне.
+	for (int i = 0; i < _currencies.size(); ++i)
 	{
-		_currencyColumns[i]->setText(_currencyWired[i]->getTypeCurrency() + ": "
-			+ QString::number(_currencyWired[i]->getRatioCurrency()));
+		if (_currencyBox->currentText() == currencyTypeToString(_currencies.keys().at(i).first))
+		{
+			_currencyColumns[_countColumns]->setText(currencyTypeToString(_currencies.keys().at(i).second) + ": "
+				+ QString::number(_currencies[CurrenciesPair(_currencies.keys().at(i).first,
+					_currencies.keys().at(i).second)], 'f', 4));
 
-		_valueColumns[i]->setText(QString::number(_currencyWired[i]->getValue
-		((_valueEdit->text().toDouble()))));
-
+			_valueColumns[_countColumns]->setText(QString::number(_currencies
+				[CurrenciesPair(_currencies.keys().at(i).first, _currencies.keys().at(i).second)]
+					*((_valueEdit->text().toDouble())),'f', 4));
+			_countColumns++;
+		}
 	}
 }
 
