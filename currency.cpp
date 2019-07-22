@@ -1,41 +1,69 @@
 #include "currency.h"
 
-Currency::Currency(QString typeCurrency)
+QMap<CurrenciesPair, double> init()
 {
-	_typeCurrency = typeCurrency;
+	QMap<CurrenciesPair, double> currencies;
+	currencies.insert(CurrenciesPair(CurrencyType::USD, CurrencyType::EUR), 0.0);
+	currencies.insert(CurrenciesPair(CurrencyType::USD, CurrencyType::AUD), 0.0);
+	currencies.insert(CurrenciesPair(CurrencyType::USD, CurrencyType::CAD), 0.0);
+	currencies.insert(CurrenciesPair(CurrencyType::USD, CurrencyType::JPY), 0.0);
+	currencies.insert(CurrenciesPair(CurrencyType::USD, CurrencyType::RUB), 0.0);
+
+	currencies.insert(CurrenciesPair(CurrencyType::RUB, CurrencyType::EUR), 0.0);
+	currencies.insert(CurrenciesPair(CurrencyType::RUB, CurrencyType::AUD), 0.0);
+	currencies.insert(CurrenciesPair(CurrencyType::RUB, CurrencyType::CAD), 0.0);
+	currencies.insert(CurrenciesPair(CurrencyType::RUB, CurrencyType::JPY), 0.0);
+	currencies.insert(CurrenciesPair(CurrencyType::RUB, CurrencyType::USD), 0.0);
+
+	currencies.insert(CurrenciesPair(CurrencyType::AUD, CurrencyType::EUR), 0.0);
+	currencies.insert(CurrenciesPair(CurrencyType::AUD, CurrencyType::USD), 0.0);
+	currencies.insert(CurrenciesPair(CurrencyType::AUD, CurrencyType::CAD), 0.0);
+	currencies.insert(CurrenciesPair(CurrencyType::AUD, CurrencyType::JPY), 0.0);
+	currencies.insert(CurrenciesPair(CurrencyType::AUD, CurrencyType::RUB), 0.0);
+
+	currencies.insert(CurrenciesPair(CurrencyType::CAD, CurrencyType::EUR), 0.0);
+	currencies.insert(CurrenciesPair(CurrencyType::CAD, CurrencyType::AUD), 0.0);
+	currencies.insert(CurrenciesPair(CurrencyType::CAD, CurrencyType::USD), 0.0);
+	currencies.insert(CurrenciesPair(CurrencyType::CAD, CurrencyType::JPY), 0.0);
+	currencies.insert(CurrenciesPair(CurrencyType::CAD, CurrencyType::RUB), 0.0);
+
+	currencies.insert(CurrenciesPair(CurrencyType::EUR, CurrencyType::USD), 0.0);
+	currencies.insert(CurrenciesPair(CurrencyType::EUR, CurrencyType::AUD), 0.0);
+	currencies.insert(CurrenciesPair(CurrencyType::EUR, CurrencyType::CAD), 0.0);
+	currencies.insert(CurrenciesPair(CurrencyType::EUR, CurrencyType::JPY), 0.0);
+	currencies.insert(CurrenciesPair(CurrencyType::EUR, CurrencyType::RUB), 0.0);
+
+	currencies.insert(CurrenciesPair(CurrencyType::JPY, CurrencyType::EUR), 0.0);
+	currencies.insert(CurrenciesPair(CurrencyType::JPY, CurrencyType::AUD), 0.0);
+	currencies.insert(CurrenciesPair(CurrencyType::JPY, CurrencyType::CAD), 0.0);
+	currencies.insert(CurrenciesPair(CurrencyType::JPY, CurrencyType::USD), 0.0);
+	currencies.insert(CurrenciesPair(CurrencyType::JPY, CurrencyType::RUB), 0.0);
+
+	return currencies;
 }
 
-Currency::Currency(QString typeCurrency, double ratioCurrency)
-{
-	_typeCurrency = typeCurrency;
-	_ratioCurrency = ratioCurrency;
-}
 
-double Currency::getRatioCurrency() const
+QString currencyTypeToString(CurrencyType type)
 {
-	return _ratioCurrency;
-}
+	switch (type)
+	{
+	case CurrencyType::USD:
+		return "USD";
 
-void Currency::setRatioCurrency(double ratioCurrency)
-{
-	_ratioCurrency = ratioCurrency;
-}
+	case CurrencyType::EUR:
+		return "EUR";
 
-QString Currency::getTypeCurrency() const
-{
-	return _typeCurrency;
-}
+	case CurrencyType::AUD:
+		return "AUD";
 
-void Currency::setTypeCurrency(QString typeCurrency)
-{
-	_typeCurrency = typeCurrency;
-}
+	case CurrencyType::CAD:
+		return "CAD";
 
-double Currency::getValue(double value)
-{
-	return value * _ratioCurrency;
-}
+	case CurrencyType::JPY:
+		return "JPY";
 
-Currency::~Currency()
-{
+	case CurrencyType::RUB:
+		return "RUB";
+	}
+	return 0;
 }

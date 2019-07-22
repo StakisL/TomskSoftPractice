@@ -17,22 +17,25 @@ public:
 	~SaveData();
 
 	QJsonDocument loadData(QString fileName);
-
-	void saveData(QVector<Currency*> currencyWired, QDate date);
-
-	QVector<Currency*> loadValue(QString baseCurrency, QDate date);
 	void saveJson(QJsonDocument document, QString fileName);
+
+	void saveData(QMap<CurrenciesPair, double> currencies, QDate date);
+    void loadValue(QMap<CurrenciesPair, double> &currencies, QDate date);
 	
-	bool checkData(QString baseCurrency, QDate data);
+	bool checkData(QDate data);
 
 private:
 	QFile _jsonFile;
 
-	QTime _oldTime;
-	QTime _newTime;
 	QString _fileName;
 
-	QVector<Currency*> _currencyWired;
+	QJsonObject _dateObject;
+	QJsonObject _recordObject;
+	QJsonArray _recordArray;
+
+	QJsonDocument _jsonDocument;
+
+	QMap<CurrenciesPair, double> _currencies;
 
 	QDate _date;
 };

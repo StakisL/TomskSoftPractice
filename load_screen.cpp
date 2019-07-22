@@ -2,19 +2,34 @@
 
 
 
-LoadScreen::LoadScreen(const QPixmap &pixmap , QWidget *parent)
+LoadScreen::LoadScreen(const QPixmap &pixmap, QWidget *parent)
+	: QSplashScreen(parent, pixmap)
 {
-	this->setPixmap(pixmap);
-	this->show();
+	setPixmap(pixmap);
+	show();
 	
-	_timer.singleShot(3000, &_loop, &QEventLoop::quit);
-	_loop.exec();
+	if (pixmap.isNull())
+	{
+		finish(&_mainWindow);
+		_mainWindow.show();
+	}
+	else
+	{
+	    _timer.singleShot(3000, this, &LoadScreen::quit);
+	}
+
+}
+
+void LoadScreen::quit()
+{
+	finish(&_mainWindow);
+	_mainWindow.show();
 }
 
 void LoadScreen::mousePressEvent(QMouseEvent *mouse)
 {
-	_loop.exit();
 	_timer.stop();
+	quit();
 }
 
 LoadScreen::~LoadScreen()

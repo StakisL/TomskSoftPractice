@@ -10,30 +10,43 @@
 #include <QJsonObject>
 #include <QString>
 #include <QDate>
+#include <QPair>
+#include <QQueue>
 #include "Currency.h"
 
 class RequestAPI : public QNetworkAccessManager
 {
 	Q_OBJECT
 public:
-	RequestAPI(QNetworkAccessManager *parent = nullptr);
+	RequestAPI(QMap<CurrenciesPair, double> currencies, QNetworkAccessManager *parent = nullptr);
 	~RequestAPI();
 
-	QVector<Currency*> getResultParse() const;
-	void getRequest(QVector<Currency*> currency, QDate date);
+	QMap<CurrenciesPair, double> getResultParse();
+	void getRequest(QDate date);
+	
 
 signals:
 	void replyAccepted();
-	void errorRequest();
 
 private:
 	void replyFinished();
+	void makeRequest(QUrl url);
 
-	QVector<Currency*> _currencyWired;
 	QNetworkAccessManager *_manager;
 	QNetworkReply *_reply;
-	QUrl _url;
+
+	QMap<CurrenciesPair, double> _currencies;
+
+	QQueue<QJsonObject> _resultRequest;
+
+	QUrl _urlFirst;
+	QUrl _urlSecond;
+	QUrl _urlThird;
+
 	QDate _date;
+
+	int  _countRequestSignals;
+	
 };
 #endif
 

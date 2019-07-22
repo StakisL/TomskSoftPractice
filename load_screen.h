@@ -5,7 +5,7 @@
 #include <QEvent>
 #include <QWidget>
 #include <QTimer>
-#include <QEventLoop>
+#include "main_window.h"
 
 class LoadScreen : public QSplashScreen
 {
@@ -13,6 +13,8 @@ public:
 	LoadScreen(const QPixmap &pixmap = QPixmap(), QWidget *parent = nullptr);
 	~LoadScreen();
 
+private:
+	void quit();
 
 protected:
 	void mousePressEvent(QMouseEvent *) override;
@@ -20,7 +22,7 @@ protected:
 
 private:
 	QTimer _timer;
-	QEventLoop _loop;
+	MainWindow _mainWindow;
 };
 #endif
 

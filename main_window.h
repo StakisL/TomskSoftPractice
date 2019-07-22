@@ -9,6 +9,7 @@
 #include <QLocale>
 #include <QDate>
 #include <QStatusBar>
+#include <QKeyEvent>
 #include "currency.h"
 #include "request_api.h"
 #include "save_data.h"
@@ -34,22 +35,28 @@ public:
 	explicit MainWindow(QWidget *parent = nullptr);
 	~MainWindow();
 
+protected:
+	void keyPressEvent(QKeyEvent *event) override;
+
 private:
 	void createAboutWindow();
-	void doConvert();
+	void convert();
 	void onReplyAccept();
 	void setEnableButton();
 	void selectDate(const QDate &date);
-	void requestInfo();
 
 	void displayResult();
 
 	void createResultConvertBox();
 	void createBaseCurrencyBox();
 
+signals:
+	void pressEnter();
+
+private:
 	QDateEdit *_calendar;
 
-	QPushButton *_submitButton;
+	QPushButton *_convertButton;
 
 	QGroupBox *_gridGroupBox;
 	QGroupBox *_formGroupBox;
@@ -58,7 +65,6 @@ private:
 	QFormLayout *_formLayout;
 	QGridLayout *_gridLayout;
 
-	QStatusBar *_information;
 	QMenuBar *_about;
 	QMenu *_menu;
 	QAction *_action;
@@ -74,8 +80,10 @@ private:
 	QComboBox *_currencyBox;
 	
 	QDate _dateToDay;
+
+	QMap<CurrenciesPair, double> _currencies;
 	SaveData _saveData;
-	QVector<Currency*> _currencyWired;
+
 	RequestAPI *_parserRequest;
 };
 

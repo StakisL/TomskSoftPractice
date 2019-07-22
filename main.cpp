@@ -1,18 +1,13 @@
 #include <QApplication>
-#include <main_window.h>
+#include "main_window.h"
 #include "load_screen.h"
 
 int main(int argc, char *argv[])
 {
 	QApplication app(argc, argv);
-	MainWindow widget;
-	QPixmap pixel(":/pic/logo.png");
-	LoadScreen loadScreen(pixel);
-	loadScreen.show();
+	//MainWindow mainWindow;
+	LoadScreen loadScreen(QPixmap(":/pic/logo.png"));
 	
-	
-	loadScreen.finish(&widget);
-	widget.show();
-	
+	//mainWindow.show();
 	return app.exec();
 }
