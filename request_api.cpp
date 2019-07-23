@@ -67,7 +67,15 @@ void RequestAPI::replyFinished()
 			emit replyAccepted();
 		}
 	}
-	//FIXED ÎÁÐÀÁÎÒÀÒÜ ÎØÈÁÊÈ.
+	else
+	{
+		_countRequestSignals++;
+		if (_countRequestSignals == 3)
+		{
+			_countRequestSignals = 0;
+			emit replyError(QString(_reply->error()));
+		}
+	}
 }
 
 

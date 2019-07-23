@@ -27,9 +27,11 @@ public:
 
 signals:
 	void replyAccepted();
+	void replyError(QString error);
 
 private:
 	void replyFinished();
+
 	void makeRequest(QUrl url);
 
 	QNetworkAccessManager *_manager;
@@ -46,7 +48,6 @@ private:
 	QDate _date;
 
 	int  _countRequestSignals;
-	
 };
 #endif
 

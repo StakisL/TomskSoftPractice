@@ -5,6 +5,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 {
 	_currencies = init();
 	_parserRequest = new RequestAPI(_currencies);
+
 	createBaseCurrencyBox();
 	createResultConvertBox();
 
@@ -23,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 	setLayout(_mainLayout);
 	
 	connect(_parserRequest, &RequestAPI::replyAccepted, this, &MainWindow::onReplyAccept);
+	connect(_parserRequest, &RequestAPI::replyError, this, &MainWindow::requestError);
 	connect(_action, &QAction::triggered, this, &MainWindow::createAboutWindow);
 }
 
@@ -31,10 +33,12 @@ void MainWindow::createResultConvertBox()
 {
 	_gridGroupBox = new QGroupBox(tr("Result convert"),this);
 	_gridLayout = new QGridLayout(this);
+
 	const int  countCollums = 6;
 
 	_valueColumns.push_back(new QLabel(tr("Value:")));
 	_currencyColumns.push_back(new QLabel(tr("Currencies:")));
+
 	_gridLayout->addWidget(_valueColumns[0], 0, 2);
 	_gridLayout->addWidget(_currencyColumns[0], 0, 1);
 
@@ -61,6 +65,7 @@ void MainWindow::createBaseCurrencyBox()
 {
 	_formGroupBox = new QGroupBox(this);
 	_formGroupBox->setFixedHeight(100);
+
 	_formLayout = new QFormLayout(this);
 
 	_valueEdit = new QLineEdit();
@@ -131,6 +136,22 @@ void MainWindow::onReplyAccept()
 
 	_saveData.saveData(_currencies, _dateToDay);
 
+	_convertButton->setEnabled(true);
+}
+
+void MainWindow::requestError(QString error)
+{
+	QString _error = error;
+	if (error.contains("302"))
+	{
+		_errorBox.setText("Maximum number of conversions per hour exceeded!");
+		_errorBox.exec();
+	}
+	else if (error.contains("3"))
+	{
+		_errorBox.setText("Error, check internet connection!");
+		_errorBox.exec();
+	}
 	_convertButton->setEnabled(true);
 }
 

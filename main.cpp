@@ -5,9 +5,6 @@
 int main(int argc, char *argv[])
 {
 	QApplication app(argc, argv);
-	//MainWindow mainWindow;
 	LoadScreen loadScreen(QPixmap(":/pic/logo.png"));
-	
-	//mainWindow.show();
 	return app.exec();
 }

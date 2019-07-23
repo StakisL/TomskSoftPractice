@@ -10,10 +10,12 @@
 #include <QDate>
 #include <QStatusBar>
 #include <QKeyEvent>
+#include <QMessageBox>
+#include "about.h"
 #include "currency.h"
 #include "request_api.h"
 #include "save_data.h"
-#include "about.h"
+
 
 class QGroupBox;
 class QLabel;
@@ -44,6 +46,7 @@ private:
 	void onReplyAccept();
 	void setEnableButton();
 	void selectDate(const QDate &date);
+	void requestError(QString error);
 
 	void displayResult();
 
@@ -78,12 +81,12 @@ private:
 	QLineEdit *_valueEdit;
 
 	QComboBox *_currencyBox;
-	
+	QMessageBox _errorBox;
+
 	QDate _dateToDay;
 
 	QMap<CurrenciesPair, double> _currencies;
 	SaveData _saveData;
-
 	RequestAPI *_parserRequest;
 };
 

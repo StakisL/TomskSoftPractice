@@ -34,10 +34,6 @@ private:
 	QJsonArray _recordArray;
 
 	QJsonDocument _jsonDocument;
-
-	QMap<CurrenciesPair, double> _currencies;
-
-	QDate _date;
 };
 
 #endif

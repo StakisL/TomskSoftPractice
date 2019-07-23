@@ -9,6 +9,7 @@ QJsonDocument SaveData::loadData(QString fileName)
 {
 	_jsonFile.setFileName(fileName);
 	_jsonFile.open(QIODevice::ReadOnly);
+
 	return QJsonDocument().fromJson(_jsonFile.readAll());
 }
 
@@ -17,25 +18,26 @@ void SaveData::saveJson(QJsonDocument document, QString fileName)
 	_jsonFile.setFileName(fileName);
 	_jsonFile.open(QIODevice::WriteOnly);
 	_jsonFile.write(document.toJson());
+
 	_jsonFile.close();
 }
 
 void SaveData::saveData(QMap<CurrenciesPair, double> currencies, QDate date)
 {
-	_currencies = currencies;
-	_date = date;
+	_recordArray = QJsonArray();
+
 	_jsonDocument = loadData(_fileName);
 	_dateObject = _jsonDocument.object();
 
-	for (int i = 0; i < _currencies.size(); i++)
+	for (int i = 0; i < currencies.size(); i++)
 	{
-		_recordObject["first"] = currencyTypeToString(_currencies.keys().at(i).first);
-		_recordObject["second"] = currencyTypeToString(_currencies.keys().at(i).second);
-		_recordObject["ratio"] = _currencies[CurrenciesPair(_currencies.keys().at(i).first,
-			_currencies.keys().at(i).second)];
+		_recordObject["first"] = currencyTypeToString(currencies.keys().at(i).first);
+		_recordObject["second"] = currencyTypeToString(currencies.keys().at(i).second);
+		_recordObject["ratio"] = currencies[CurrenciesPair(currencies.keys().at(i).first,
+			currencies.keys().at(i).second)];
 		_recordArray.append(_recordObject);
 	}
-	_dateObject[_date.toString("dd.MM.yyyy")] = _recordArray;
+	_dateObject[date.toString("dd.MM.yyyy")] = _recordArray;
 	_jsonDocument.setObject(_dateObject);
 
 	saveJson(_jsonDocument, _fileName);
@@ -43,6 +45,8 @@ void SaveData::saveData(QMap<CurrenciesPair, double> currencies, QDate date)
 
 void SaveData::loadValue(QMap<CurrenciesPair, double> &currencies, QDate date)
 {
+	_recordArray = QJsonArray();
+
 	_dateObject = loadData(_fileName).object();
 	for (int i = 0; i < _dateObject.size(); i++)
 	{

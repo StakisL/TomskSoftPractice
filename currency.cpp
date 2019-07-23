@@ -3,6 +3,7 @@
 QMap<CurrenciesPair, double> init()
 {
 	QMap<CurrenciesPair, double> currencies;
+
 	currencies.insert(CurrenciesPair(CurrencyType::USD, CurrencyType::EUR), 0.0);
 	currencies.insert(CurrenciesPair(CurrencyType::USD, CurrencyType::AUD), 0.0);
 	currencies.insert(CurrenciesPair(CurrencyType::USD, CurrencyType::CAD), 0.0);

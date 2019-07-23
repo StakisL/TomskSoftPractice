@@ -23,4 +23,3 @@ QString currencyTypeToString(CurrencyType type);
 
 #endif CURRENCY_H
 
-
