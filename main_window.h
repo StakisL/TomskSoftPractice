@@ -17,6 +17,8 @@
 #include <QStatusBar>
 #include <QKeyEvent>
 #include <QMessageBox>
+#include <QTimer>
+#include "combo_box.h"
 #include "about.h"
 #include "currency.h"
 #include "request_manager.h"
@@ -52,6 +54,7 @@ private:
 	void setEnableButton();
 	void selectDate(const QDate &date);
 	void requestError(const QString &error);
+	void timeoutError();
 
 	void displayResult();
 
@@ -85,8 +88,10 @@ private:
 
 	QLineEdit *_valueEdit;
 
-	QComboBox *_currencyBox;
+	ComboBox *_currencyBox;
 	QMessageBox _errorBox;
+
+	QTimer *_waitedTime;
 
 	QDate _dateToDay;
 

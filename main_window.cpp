@@ -9,6 +9,8 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 	createBaseCurrencyBox();
 	createResultConvertBox();
 
+	_waitedTime = new QTimer(this);
+
 	_about = new QMenuBar(this);
 	_about->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_menu = new QMenu("&Help");
@@ -23,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 	_mainLayout->addWidget(_gridGroupBox);
 	setLayout(_mainLayout);
 	
+	
 	connect(_parserRequest, &RequestManager::replyAccepted, this, &MainWindow::onReplyAccept);
 	connect(_parserRequest, &RequestManager::replyError, this, &MainWindow::requestError);
 	connect(_action, &QAction::triggered, this, []()
@@ -35,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 
 void MainWindow::createResultConvertBox()
 {
-	_gridGroupBox = new QGroupBox(tr("Result convert"),this);
+	_gridGroupBox = new QGroupBox(this);
 	_gridLayout = new QGridLayout(this);
 
 	const int  countColumns = 6;
@@ -68,7 +71,7 @@ void MainWindow::createResultConvertBox()
 void MainWindow::createBaseCurrencyBox()
 {
 	_formGroupBox = new QGroupBox(this);
-	_formGroupBox->setFixedHeight(100);
+	_formGroupBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
 	_formLayout = new QFormLayout(this);
 
@@ -78,13 +81,13 @@ void MainWindow::createBaseCurrencyBox()
 	_valueEdit->setValidator(new QRegExpValidator
 	(QRegExp("[0-9]{0,6}[.]{0,1}[0-9]{0,3}$")));
 
-	_currencyBox = new QComboBox(this);
+	_currencyBox = new ComboBox();
 	_currencyBox->addItem("USD");
 	_currencyBox->addItem("AUD");
 	_currencyBox->addItem("CAD");
+	_currencyBox->addItem("RUB");
 	_currencyBox->addItem("JPY");
 	_currencyBox->addItem("EUR");
-	_currencyBox->addItem("RUB");
 
 	_dateToDay = _dateToDay.currentDate();
 	QDate minimumDate(_dateToDay.year() - 1, _dateToDay.month(),
@@ -130,18 +133,30 @@ void MainWindow::convert()
 	}
 	else
 	{
+		connect(_waitedTime, &QTimer::timeout, this, &MainWindow::timeoutError);
+		_waitedTime->start(3000);
 		_parserRequest->getRequest(_dateToDay);
 	}
 }
 
 void MainWindow::onReplyAccept()
 {
+	_waitedTime->stop();
+	disconnect(_waitedTime, &QTimer::timeout, this, &MainWindow::timeoutError);
 	_parserRequest->getResultParse(_currencies);
 	displayResult();
 
 	_saveData.saveValue(_currencies, _dateToDay);
 
 	_convertButton->setEnabled(true);
+}
+
+void MainWindow::timeoutError()
+{
+	disconnect(_waitedTime, &QTimer::timeout, this, &MainWindow::timeoutError);
+	_convertButton->setEnabled(true);
+	_errorBox.setText("Error,check internet connection");
+	_errorBox.exec();
 }
 
 void MainWindow::requestError(const QString &error)
@@ -166,7 +181,7 @@ void MainWindow::displayResult()
 	for (int i = 0; i < _currencies.size(); ++i)
 	{
 		auto currency = _currencies.keys().at(i);
-		if (_currencyBox->currentText() == currencyTypeToString(currency.first))
+		if (_currencyBox->currentItem() == currency.first)
 		{
 			_currencyColumns[_countColumns]->setText(currencyTypeToString(currency.second) + ": "
 				+ QString::number(_currencies[CurrenciesPair(currency.first,

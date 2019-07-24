@@ -26,6 +26,8 @@ set(PROJECT_SOURCE
     load_screen.h
     save_data.cpp
     save_data.h
+    combo_box.cpp
+    combo_box.h
     )
 
 qt5_add_resources(PROJECT_QRC_RESOURCE 
