@@ -24,6 +24,4 @@ About::About(QDialog *parent) : QDialog(parent)
 
 }
 
-About::~About()
-{
-}
+About::~About() = default;

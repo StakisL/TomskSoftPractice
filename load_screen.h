@@ -10,7 +10,7 @@
 class LoadScreen : public QSplashScreen
 {
 public:
-	LoadScreen(const QPixmap &pixmap = QPixmap(), QWidget *parent = nullptr);
+	LoadScreen(MainWindow *main, const QPixmap &pixmap = QPixmap(), QWidget *parent = nullptr);
 	~LoadScreen();
 
 private:
@@ -22,7 +22,7 @@ protected:
 
 private:
 	QTimer _timer;
-	MainWindow _mainWindow;
+	MainWindow *_mainWindow;
 };
 #endif
 

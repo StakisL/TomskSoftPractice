@@ -17,9 +17,9 @@ enum class CurrencyType
 
 typedef QPair<CurrencyType, CurrencyType> CurrenciesPair;
 
-QMap<CurrenciesPair, double> init();
+void createCurrencyMap(QMap<CurrenciesPair, double> &currencies);
 
-QString currencyTypeToString(CurrencyType type);
+QString currencyTypeToString(CurrencyType &type);
 
 #endif CURRENCY_H
 

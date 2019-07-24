@@ -3,8 +3,8 @@
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 {
-	_currencies = init();
-	_parserRequest = new RequestAPI(_currencies);
+	createCurrencyMap(_currencies);
+	_parserRequest = new RequestManager();
 
 	createBaseCurrencyBox();
 	createResultConvertBox();
@@ -23,9 +23,13 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 	_mainLayout->addWidget(_gridGroupBox);
 	setLayout(_mainLayout);
 	
-	connect(_parserRequest, &RequestAPI::replyAccepted, this, &MainWindow::onReplyAccept);
-	connect(_parserRequest, &RequestAPI::replyError, this, &MainWindow::requestError);
-	connect(_action, &QAction::triggered, this, &MainWindow::createAboutWindow);
+	connect(_parserRequest, &RequestManager::replyAccepted, this, &MainWindow::onReplyAccept);
+	connect(_parserRequest, &RequestManager::replyError, this, &MainWindow::requestError);
+	connect(_action, &QAction::triggered, this, []()
+	{
+		About about;
+		about.exec();
+	});
 }
 
 
@@ -34,7 +38,7 @@ void MainWindow::createResultConvertBox()
 	_gridGroupBox = new QGroupBox(tr("Result convert"),this);
 	_gridLayout = new QGridLayout(this);
 
-	const int  countCollums = 6;
+	const int  countColumns = 6;
 
 	_valueColumns.push_back(new QLabel(tr("Value:")));
 	_currencyColumns.push_back(new QLabel(tr("Currencies:")));
@@ -42,13 +46,13 @@ void MainWindow::createResultConvertBox()
 	_gridLayout->addWidget(_valueColumns[0], 0, 2);
 	_gridLayout->addWidget(_currencyColumns[0], 0, 1);
 
-	for (int i = 1; i < countCollums; ++i)
+	for (int i = 1; i < countColumns; ++i)
 	{
 		_currencyColumns.push_back(new QLabel(tr("Currency %1:").arg(i + 1)));
 		_gridLayout->addWidget(_currencyColumns[i], i + 1, 1);
 	}
 
-	for (int i = 1; i < countCollums; ++i)
+	for (int i = 1; i < countColumns; ++i)
 	{
 		_valueColumns.push_back(new QLabel(tr("Value :").arg(i + 1)));
 		_gridLayout->addWidget(_valueColumns[i], i + 1, 2);
@@ -105,7 +109,7 @@ void MainWindow::createBaseCurrencyBox()
 	_valueEdit->setFocus();
 
 	connect(_valueEdit, &QLineEdit::textEdited, this, &MainWindow::setEnableButton);
-	connect(this, &MainWindow::pressEnter, &MainWindow::convert);
+	connect(this, &MainWindow::pressedEnter, &MainWindow::convert);
 	connect(_convertButton, &QPushButton::clicked, this, &MainWindow::convert);
 	connect(_calendar, &QDateEdit::dateChanged, this, &MainWindow::selectDate);
 }
@@ -117,31 +121,31 @@ void MainWindow::setEnableButton()
 
 void MainWindow::convert()
 {
+	_convertButton->setEnabled(false);
 	if (_saveData.checkData(_dateToDay))
 	{
 		_saveData.loadValue(_currencies, _dateToDay);
 		displayResult();
+		_convertButton->setEnabled(true);
 	}
 	else
 	{
 		_parserRequest->getRequest(_dateToDay);
-		_convertButton->setEnabled(false);
 	}
 }
 
 void MainWindow::onReplyAccept()
 {
-	_currencies = _parserRequest->getResultParse();
+	_parserRequest->getResultParse(_currencies);
 	displayResult();
 
-	_saveData.saveData(_currencies, _dateToDay);
+	_saveData.saveValue(_currencies, _dateToDay);
 
 	_convertButton->setEnabled(true);
 }
 
-void MainWindow::requestError(QString error)
+void MainWindow::requestError(const QString &error)
 {
-	QString _error = error;
 	if (error.contains("302"))
 	{
 		_errorBox.setText("Maximum number of conversions per hour exceeded!");
@@ -161,14 +165,15 @@ void MainWindow::displayResult()
 	////Отображаем результаты в основном окне.
 	for (int i = 0; i < _currencies.size(); ++i)
 	{
-		if (_currencyBox->currentText() == currencyTypeToString(_currencies.keys().at(i).first))
+		auto currency = _currencies.keys().at(i);
+		if (_currencyBox->currentText() == currencyTypeToString(currency.first))
 		{
-			_currencyColumns[_countColumns]->setText(currencyTypeToString(_currencies.keys().at(i).second) + ": "
-				+ QString::number(_currencies[CurrenciesPair(_currencies.keys().at(i).first,
-					_currencies.keys().at(i).second)], 'f', 4));
+			_currencyColumns[_countColumns]->setText(currencyTypeToString(currency.second) + ": "
+				+ QString::number(_currencies[CurrenciesPair(currency.first,
+					currency.second)], 'f', 4));
 
 			_valueColumns[_countColumns]->setText(QString::number(_currencies
-				[CurrenciesPair(_currencies.keys().at(i).first, _currencies.keys().at(i).second)]
+				[CurrenciesPair(currency.first, currency.second)]
 					*((_valueEdit->text().toDouble())),'f', 4));
 			_countColumns++;
 		}
@@ -179,8 +184,10 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 {
 	if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter)
 	{
-		emit pressEnter();
+		emit pressedEnter();
 	}
+
+	QWidget::keyPressEvent(event);
 }
 
 void MainWindow::selectDate(const QDate &date)
@@ -188,12 +195,4 @@ void MainWindow::selectDate(const QDate &date)
 	_dateToDay = date;
 }
 
-
-void MainWindow::createAboutWindow()
-{
-	About about;
-	about.exec();
-}
-
-
-MainWindow::~MainWindow() {}
+MainWindow::~MainWindow() = default;

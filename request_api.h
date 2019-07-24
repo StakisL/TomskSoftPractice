@@ -14,30 +14,27 @@
 #include <QQueue>
 #include "Currency.h"
 
-class RequestAPI : public QNetworkAccessManager
+class RequestManager : public QNetworkAccessManager
 {
 	Q_OBJECT
 public:
-	RequestAPI(QMap<CurrenciesPair, double> currencies, QNetworkAccessManager *parent = nullptr);
-	~RequestAPI();
+	RequestManager(QObject *parent = nullptr);
+	~RequestManager();
 
-	QMap<CurrenciesPair, double> getResultParse();
-	void getRequest(QDate date);
+	void getResultParse(QMap<CurrenciesPair, double> &currencies);
+	void getRequest(const QDate &date);
 	
 
 signals:
 	void replyAccepted();
-	void replyError(QString error);
+	void replyError(const QString &error);
 
 private:
 	void replyFinished();
 
-	void makeRequest(QUrl url);
+	void makeRequest(const QUrl &url);
 
-	QNetworkAccessManager *_manager;
 	QNetworkReply *_reply;
-
-	QMap<CurrenciesPair, double> _currencies;
 
 	QQueue<QJsonObject> _resultRequest;
 

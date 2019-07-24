@@ -2,16 +2,17 @@
 
 
 
-LoadScreen::LoadScreen(const QPixmap &pixmap, QWidget *parent)
+LoadScreen::LoadScreen(MainWindow *main, const QPixmap &pixmap, QWidget *parent)
 	: QSplashScreen(parent, pixmap)
+	, _mainWindow(main)
 {
 	setPixmap(pixmap);
 	show();
 	
 	if (pixmap.isNull())
 	{
-		finish(&_mainWindow);
-		_mainWindow.show();
+		finish(_mainWindow);
+		_mainWindow->show();
 	}
 	else
 	{
@@ -22,8 +23,8 @@ LoadScreen::LoadScreen(const QPixmap &pixmap, QWidget *parent)
 
 void LoadScreen::quit()
 {
-	finish(&_mainWindow);
-	_mainWindow.show();
+	finish(_mainWindow);
+	_mainWindow->show();
 }
 
 void LoadScreen::mousePressEvent(QMouseEvent *mouse)
@@ -32,6 +33,4 @@ void LoadScreen::mousePressEvent(QMouseEvent *mouse)
 	quit();
 }
 
-LoadScreen::~LoadScreen()
-{
-}
+LoadScreen::~LoadScreen() = default;

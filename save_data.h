@@ -7,6 +7,7 @@
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QFile>
+#include <QMessageBox>
 #include <QVector>
 #include "currency.h"
 
@@ -16,15 +17,15 @@ public:
 	SaveData();
 	~SaveData();
 
-	QJsonDocument loadData(QString fileName);
-	void saveJson(QJsonDocument document, QString fileName);
-
-	void saveData(QMap<CurrenciesPair, double> currencies, QDate date);
-    void loadValue(QMap<CurrenciesPair, double> &currencies, QDate date);
+	void saveValue(const QMap<CurrenciesPair, double> &currencies, const QDate &date);
+    void loadValue(QMap<CurrenciesPair, double> &currencies, const QDate &date);
 	
-	bool checkData(QDate data);
+	bool checkData(const QDate &data);
 
 private:
+	QJsonDocument loadData(const QString &fileName);
+	void saveData(QJsonDocument &document, const QString &fileName);
+
 	QFile _jsonFile;
 
 	QString _fileName;
@@ -32,6 +33,8 @@ private:
 	QJsonObject _dateObject;
 	QJsonObject _recordObject;
 	QJsonArray _recordArray;
+
+	QMessageBox _errorBox;
 
 	QJsonDocument _jsonDocument;
 };

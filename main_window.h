@@ -47,12 +47,11 @@ protected:
 	void keyPressEvent(QKeyEvent *event) override;
 
 private:
-	void createAboutWindow();
 	void convert();
 	void onReplyAccept();
 	void setEnableButton();
 	void selectDate(const QDate &date);
-	void requestError(QString error);
+	void requestError(const QString &error);
 
 	void displayResult();
 
@@ -60,7 +59,7 @@ private:
 	void createBaseCurrencyBox();
 
 signals:
-	void pressEnter();
+	void pressedEnter();
 
 private:
 	QDateEdit *_calendar;
@@ -93,7 +92,7 @@ private:
 
 	QMap<CurrenciesPair, double> _currencies;
 	SaveData _saveData;
-	RequestAPI *_parserRequest;
+	RequestManager *_parserRequest;
 };
 
 #endif

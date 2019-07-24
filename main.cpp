@@ -4,7 +4,12 @@
 
 int main(int argc, char *argv[])
 {
+	QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 	QApplication app(argc, argv);
-	LoadScreen loadScreen(QPixmap(":/pic/logo.png"));
-	return app.exec();
+	MainWindow *mainWindow = new MainWindow();
+	LoadScreen loadScreen(mainWindow, QPixmap(":/pic/logo.png"));
+
+	auto result = app.exec();
+	delete mainWindow;
+	return result;
 }

@@ -1,17 +1,14 @@
 #include "request_api.h"
 
-RequestAPI::RequestAPI(QMap<CurrenciesPair, double> currencies, QNetworkAccessManager *parent)
+RequestManager::RequestManager(QObject *parent)
 	: QNetworkAccessManager(parent)
 {
-	_currencies = currencies;
 	_error = false;
 }
 
-void RequestAPI::getRequest(QDate date)
+void RequestManager::getRequest(const QDate &date)
 {
-	int i = 0; 
 	_date = date;
-
 	/*
 	Используемая API разрешает сделать запрос только 10 преобразований за 1 раз,
 	для получение полного списка валют за день, используем в качестве общего запроса,
@@ -41,14 +38,13 @@ void RequestAPI::getRequest(QDate date)
 	makeRequest(_urlThird);
 }
 
-void RequestAPI::makeRequest(QUrl url)
+void RequestManager::makeRequest(const QUrl &url)
 {
-	_manager = new QNetworkAccessManager();
-	_reply = _manager->get(QNetworkRequest(url));
-	connect(_reply, &QNetworkReply::finished, this, &RequestAPI::replyFinished);
+	_reply = get(QNetworkRequest(url));
+	connect(_reply, &QNetworkReply::finished, this, &RequestManager::replyFinished);
 }
 
-void RequestAPI::replyFinished()
+void RequestManager::replyFinished()
 {
 	_reply = qobject_cast<QNetworkReply *>(sender());
 
@@ -57,56 +53,54 @@ void RequestAPI::replyFinished()
 		QJsonDocument content = QJsonDocument::fromJson(_reply->readAll());
 		_resultRequest.enqueue(content.object());
 		_reply->deleteLater();
-
 		_countRequestSignals++;
-
-		if (_countRequestSignals == 3 && !_error)
-		{
-			_countRequestSignals = 0;
-			emit replyAccepted();
-		}
 	}
 	else
 	{
 		_countRequestSignals++;
 		_error = true;
 		_textError = _reply->error();
+	}
 
-		if (_countRequestSignals == 3 && _error)
-		{
-			_countRequestSignals = 0;
-			_error = false;
-			emit replyError(_textError);
-		}
+	if (_countRequestSignals == 3 && _error)
+	{
+		_countRequestSignals = 0;
+		_error = false;
+		emit replyError(_textError);
+	}
+	else if (_countRequestSignals == 3 && !_error)
+	{
+		_countRequestSignals = 0;
+		emit replyAccepted();
 	}
 }
 
 
-QMap<CurrenciesPair, double> RequestAPI::getResultParse()
+void RequestManager::getResultParse(QMap<CurrenciesPair, double> &currencies)
 {
 	while(!_resultRequest.empty())
 	{
 		QJsonObject root = _resultRequest.dequeue();
 		QJsonObject innerRoot;
 
-		for (int i = 0; i < _currencies.size(); i++)
+		for (int i = 0; i < currencies.size(); i++)
 		{
 			for (int j = 0; j < root.size(); j++)
 			{
-				if (root.keys().at(j).contains(QString(currencyTypeToString(_currencies.keys().at(i).first)
-					+ "_" + (currencyTypeToString(_currencies.keys().at(i).second)))))
+				auto currency = currencies.keys().at(i);
+				if (root.keys().at(j).contains(QString(currencyTypeToString(currency.first)
+					+ "_" + (currencyTypeToString(currency.second)))))
 				{
 					innerRoot = root[root.keys().at(j)].toObject();
-					_currencies[CurrenciesPair(_currencies.keys().at(i).first, _currencies.keys().at(i).second)] =
+					currencies[CurrenciesPair(currency.first, currency.second)] =
 						innerRoot[_date.toString("yyyy-MM-dd")].toDouble();
 				}
 			}
 		}
 	}
-	return _currencies;
 }
 
-RequestAPI::~RequestAPI() 
+RequestManager::~RequestManager() 
 {
 	if (_reply != nullptr)
 		_reply->deleteLater();
