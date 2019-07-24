@@ -12,7 +12,7 @@
 #include <QDate>
 #include <QPair>
 #include <QQueue>
-#include "Currency.h"
+#include "currency.h"
 
 class RequestManager : public QNetworkAccessManager
 {

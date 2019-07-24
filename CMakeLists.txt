@@ -21,8 +21,8 @@ set(PROJECT_SOURCE
     about.h
     currency.cpp
     currency.h
-    request_api.cpp
-    request_api.h
+    request_manager.cpp
+    request_manager.h
     load_screen.cpp
     load_screen.h
     save_data.cpp

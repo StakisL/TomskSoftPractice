@@ -19,7 +19,7 @@
 #include <QMessageBox>
 #include "about.h"
 #include "currency.h"
-#include "request_api.h"
+#include "request_manager.h"
 #include "save_data.h"
 
 

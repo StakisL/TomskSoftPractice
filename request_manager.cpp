@@ -1,4 +1,4 @@
-#include "request_api.h"
+#include "request_manager.h"
 
 RequestManager::RequestManager(QObject *parent)
 	: QNetworkAccessManager(parent)
@@ -10,9 +10,9 @@ void RequestManager::getRequest(const QDate &date)
 {
 	_date = date;
 	/*
-	Г€Г±ГЇГ®Г«ГјГ§ГіГҐГ¬Г Гї API Г°Г Г§Г°ГҐГёГ ГҐГІ Г±Г¤ГҐГ«Г ГІГј Г§Г ГЇГ°Г®Г± ГІГ®Г«ГјГЄГ® 10 ГЇГ°ГҐГ®ГЎГ°Г Г§Г®ГўГ Г­ГЁГ© Г§Г  1 Г°Г Г§,
-	Г¤Г«Гї ГЇГ®Г«ГіГ·ГҐГ­ГЁГҐ ГЇГ®Г«Г­Г®ГЈГ® Г±ГЇГЁГ±ГЄГ  ГўГ Г«ГѕГІ Г§Г  Г¤ГҐГ­Гј, ГЁГ±ГЇГ®Г«ГјГ§ГіГҐГ¬ Гў ГЄГ Г·ГҐГ±ГІГўГҐ Г®ГЎГ№ГҐГЈГ® Г§Г ГЇГ°Г®Г±Г ,
-	Г±Г°Г Г§Гі 3 Г§Г ГЇГ°Г®Г±Г .
+	Используемая API разрешает сделать запрос только 10 преобразований за 1 раз,
+	для получение полного списка валют за день, используем в качестве общего запроса,
+	сразу 3 запроса.
 	*/
 	_urlFirst.setUrl(QString("http://free.currconv.com/api/v7/convert?q="
 		"USD_AUD,USD_CAD,USD_EUR,USD_JPY,USD_RUB,"
