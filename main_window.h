@@ -4,6 +4,12 @@
 #include <QWidget>
 #include <QVector>
 #include <QLayout>
+#include <QMenu>
+#include <QComboBox>
+#include <QDateTimeEdit>
+#include <QGroupBox>
+#include <QLineEdit>
+#include <QMenuBar>
 #include <QDoubleValidator>
 #include <QFormLayout>
 #include <QLocale>

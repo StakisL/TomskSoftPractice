@@ -149,7 +149,7 @@ void MainWindow::requestError(QString error)
 	}
 	else if (error.contains("3"))
 	{
-		_errorBox.setText("Error, check internet connection!");
+		_errorBox.setText("Error, server is not response!");
 		_errorBox.exec();
 	}
 	_convertButton->setEnabled(true);

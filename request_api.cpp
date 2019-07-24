@@ -1,11 +1,10 @@
 #include "request_api.h"
 
-
-
 RequestAPI::RequestAPI(QMap<CurrenciesPair, double> currencies, QNetworkAccessManager *parent)
 	: QNetworkAccessManager(parent)
 {
 	_currencies = currencies;
+	_error = false;
 }
 
 void RequestAPI::getRequest(QDate date)
@@ -61,7 +60,7 @@ void RequestAPI::replyFinished()
 
 		_countRequestSignals++;
 
-		if (_countRequestSignals == 3)
+		if (_countRequestSignals == 3 && !_error)
 		{
 			_countRequestSignals = 0;
 			emit replyAccepted();
@@ -70,10 +69,14 @@ void RequestAPI::replyFinished()
 	else
 	{
 		_countRequestSignals++;
-		if (_countRequestSignals == 3)
+		_error = true;
+		_textError = _reply->error();
+
+		if (_countRequestSignals == 3 && _error)
 		{
 			_countRequestSignals = 0;
-			emit replyError(QString(_reply->error()));
+			_error = false;
+			emit replyError(_textError);
 		}
 	}
 }

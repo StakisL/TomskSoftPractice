@@ -45,9 +45,12 @@ private:
 	QUrl _urlSecond;
 	QUrl _urlThird;
 
+	QString _textError;
+
 	QDate _date;
 
 	int  _countRequestSignals;
+	bool _error;
 };
 #endif
 

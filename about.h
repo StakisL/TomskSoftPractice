@@ -2,7 +2,7 @@
 #define ABOUT_H
 
 #include <QDialog>
-#include <QtWidgets>
+#include <QWidget>
 #include <QLayout>
 #include <QLabel>
 #include <QPushButton>
