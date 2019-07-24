@@ -5,7 +5,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 
-
 find_package(Qt5 REQUIRED COMPONENTS
     Widgets
     Core
@@ -29,8 +28,10 @@ set(PROJECT_SOURCE
     save_data.h
     )
 
-qt5_add_resources(PROJECT_RESOURCE Resource.qrc)
-add_executable(${PROJECT_NAME} WIN32 ${PROJECT_SOURCE} ${PROJECT_RESOURCE})	
+qt5_add_resources(PROJECT_QRC_RESOURCE 
+    Resource.qrc
+    )
+add_executable(${PROJECT_NAME} WIN32 ${PROJECT_SOURCE} ${PROJECT_QRC_RESOURCE})	
 target_link_libraries(${PROJECT_NAME} PUBLIC 
     Qt5::Core
     Qt5::Gui
